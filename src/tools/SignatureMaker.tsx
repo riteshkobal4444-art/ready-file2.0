@@ -279,7 +279,7 @@ export const SignatureMaker: React.FC = () => {
 
             {/* Drawing Controls Bar */}
             <div className="flex flex-wrap items-center justify-between gap-4 pt-2">
-              <div className="flex items-center gap-4">
+              <div className="flex flex-col sm:flex-row sm:items-center items-start gap-3 sm:gap-4">
                 {/* Pen Width */}
                 <div className="flex items-center gap-1.5">
                   <span className="text-xs font-semibold text-[#182230]">Stroke:</span>
@@ -288,7 +288,7 @@ export const SignatureMaker: React.FC = () => {
                       key={w}
                       type="button"
                       onClick={() => setPenWidth(w)}
-                      className={`px-2.5 py-1 rounded text-xs font-semibold border ${
+                      className={`px-3 py-1.5 sm:px-2.5 sm:py-1 rounded text-xs font-semibold border ${
                         penWidth === w
                           ? 'bg-[#5278F5] text-white border-[#5278F5]'
                           : 'bg-[#F4F6FA] text-[#182230] border-[#E7EAF0]'
@@ -300,7 +300,7 @@ export const SignatureMaker: React.FC = () => {
                 </div>
 
                 {/* Ink Color */}
-                <div className="flex items-center gap-1.5">
+                <div className="flex items-center gap-2 sm:gap-1.5 flex-wrap">
                   <span className="text-xs font-semibold text-[#182230]">Ink:</span>
                   {SIGNATURE_COLORS.map((c) => (
                     <button
@@ -308,7 +308,7 @@ export const SignatureMaker: React.FC = () => {
                       type="button"
                       onClick={() => setPenColor(c.hex)}
                       style={{ backgroundColor: c.hex }}
-                      className={`w-6 h-6 rounded-full border-2 transition-transform ${
+                      className={`w-7 h-7 sm:w-6 sm:h-6 rounded-full border-2 transition-transform cursor-pointer ${
                         penColor === c.hex ? 'border-[#5278F5] scale-110 shadow-xs' : 'border-white'
                       }`}
                       title={c.name}
