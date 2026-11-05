@@ -1,0 +1,6 @@
+{
+  "name": "Readyfile - Document Utility Platform",
+  "description": "Free, privacy-conscious online document preparation platform. Compress and resize images, merge PDFs, convert images to PDF, and check file requirements directly in your browser.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
