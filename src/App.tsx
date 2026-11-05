@@ -11,6 +11,7 @@ import { Home } from './pages/Home';
 import { AllTools } from './pages/AllTools';
 import { ImageToolsPage } from './pages/ImageToolsPage';
 import { PdfToolsPage } from './pages/PdfToolsPage';
+import { VideoToolsPage } from './pages/VideoToolsPage';
 import { GuidesPage } from './pages/GuidesPage';
 import { GuideDetailPage } from './pages/GuideDetailPage';
 import { ToolPage } from './pages/ToolPage';
@@ -59,6 +60,8 @@ export default function App() {
       document.title = 'Image Preparation Tools — READYFILE';
     } else if (currentPath === '/pdf-tools') {
       document.title = 'PDF Document Tools — READYFILE';
+    } else if (currentPath === '/video-tools') {
+      document.title = 'Video Processing Tools — READYFILE';
     } else if (currentPath === '/guides') {
       document.title = 'Document Preparation Guides — READYFILE';
     } else if (currentPath.startsWith('/tool/')) {
@@ -90,6 +93,10 @@ export default function App() {
 
     if (currentPath === '/pdf-tools') {
       return <PdfToolsPage onNavigate={navigate} onSelectTool={handleSelectTool} />;
+    }
+
+    if (currentPath === '/video-tools') {
+      return <VideoToolsPage onNavigate={navigate} onSelectTool={handleSelectTool} />;
     }
 
     if (currentPath === '/guides') {

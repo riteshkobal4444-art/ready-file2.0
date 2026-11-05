@@ -53,7 +53,7 @@ export const Footer: React.FC<FooterProps> = ({ onNavigate }) => {
                   onClick={() => handleNav('/tools')}
                   className="text-[#182230] hover:text-[#5278F5] transition-colors"
                 >
-                  All Tools (15)
+                  All Tools (20)
                 </button>
               </li>
               <li>
@@ -70,6 +70,14 @@ export const Footer: React.FC<FooterProps> = ({ onNavigate }) => {
                   className="text-[#182230] hover:text-[#5278F5] transition-colors"
                 >
                   Image Tools
+                </button>
+              </li>
+              <li>
+                <button
+                  onClick={() => handleNav('/video-tools')}
+                  className="text-[#182230] hover:text-[#5278F5] transition-colors"
+                >
+                  Video Tools
                 </button>
               </li>
               <li>
@@ -110,20 +118,18 @@ export const Footer: React.FC<FooterProps> = ({ onNavigate }) => {
             </ul>
           </div>
 
-          {/* Column 3: Image & Utility Tools */}
+          {/* Column 3: Video & Doc Tools */}
           <div>
             <h4 className="text-xs font-semibold uppercase tracking-wider text-[#687386] mb-4">
-              Image & Utility Tools (9)
+              Video & Doc Tools (7)
             </h4>
             <ul className="space-y-2 text-xs">
               {[
-                { name: 'Image Compressor', slug: 'image-compressor' },
-                { name: 'Image Resizer', slug: 'image-resizer' },
-                { name: 'Image to PDF', slug: 'image-to-pdf' },
-                { name: 'Image Cropper', slug: 'image-cropper' },
-                { name: 'Format Converter', slug: 'image-converter' },
-                { name: 'Passport Photo', slug: 'passport-photo' },
-                { name: 'Signature Maker', slug: 'signature-maker' },
+                { name: 'Video Compressor', slug: 'video-compressor' },
+                { name: 'Video Trimmer', slug: 'video-trimmer' },
+                { name: 'Video Muter', slug: 'video-muter' },
+                { name: 'Thumbnail Maker', slug: 'video-thumbnail-maker' },
+                { name: 'Frame Extractor', slug: 'video-frame-extractor' },
                 { name: 'Requirement Checker', slug: 'file-checker' },
                 { name: 'Checklist Builder', slug: 'checklist-builder' },
               ].map((t) => (

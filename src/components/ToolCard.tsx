@@ -17,7 +17,13 @@ import {
   ListChecks,
   ArrowRight,
   Clock,
-  Sparkles
+  Sparkles,
+  Film,
+  Scissors,
+  VolumeX,
+  Camera,
+  Clapperboard,
+  Video
 } from 'lucide-react';
 import { ToolItem } from '../types';
 
@@ -37,6 +43,12 @@ const iconMap: Record<string, React.ElementType> = {
   RotateCw,
   ArrowUpDown,
   ListChecks,
+  Film,
+  Scissors,
+  VolumeX,
+  Camera,
+  Clapperboard,
+  Video,
 };
 
 interface ToolCardProps {

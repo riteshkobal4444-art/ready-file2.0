@@ -11,7 +11,8 @@ import {
   FileImage, 
   BookOpen, 
   Lock,
-  Sparkles
+  Sparkles,
+  Film
 } from 'lucide-react';
 import { ToolCard } from '../components/ToolCard';
 import { TOOLS, getActiveTools } from '../data/tools';
@@ -46,7 +47,7 @@ export const Home: React.FC<HomeProps> = ({ onNavigate, onSelectTool }) => {
         </h1>
 
         <p className="text-base sm:text-lg text-[#687386] max-w-2xl mx-auto leading-relaxed mb-8">
-          Free, fast, and private online document preparation tools. Compress and resize images, merge PDFs, convert scans to PDF, and check upload requirements without registration.
+          Free, fast, and private online document & media preparation tools. Compress and resize images, merge and split PDFs, trim and mute videos, and check upload requirements without registration.
         </p>
 
         {/* Primary CTA Buttons */}
@@ -55,7 +56,7 @@ export const Home: React.FC<HomeProps> = ({ onNavigate, onSelectTool }) => {
             onClick={() => onNavigate('/tools')}
             className="w-full sm:w-auto px-6 py-3.5 rounded-lg bg-[#5278F5] hover:bg-[#4165DC] text-white text-sm font-semibold transition-all shadow-sm flex items-center justify-center gap-2"
           >
-            <span>Explore All 15 Tools</span>
+            <span>Explore All 20 Tools</span>
             <ArrowRight className="w-4 h-4" />
           </button>
 
@@ -101,17 +102,17 @@ export const Home: React.FC<HomeProps> = ({ onNavigate, onSelectTool }) => {
         <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-3 mb-8">
           <div>
             <div className="text-xs font-semibold uppercase tracking-wider text-[#5278F5] mb-1">
-              Version 1.2 Available Now ({activeTools.length} Active Tools)
+              Available Now ({activeTools.length} Active Tools)
             </div>
             <h2 className="font-['Plus_Jakarta_Sans'] font-bold text-2xl sm:text-3xl text-[#182230] tracking-tight">
-              Active Document Utilities
+              Active Document & Media Utilities
             </h2>
           </div>
           <button
             onClick={() => onNavigate('/tools')}
             className="text-xs font-medium text-[#5278F5] hover:underline flex items-center gap-1 self-start sm:self-auto"
           >
-            <span>View all 15 tools</span>
+            <span>View all 20 tools</span>
             <ArrowRight className="w-3.5 h-3.5" />
           </button>
         </div>
@@ -128,14 +129,14 @@ export const Home: React.FC<HomeProps> = ({ onNavigate, onSelectTool }) => {
         <div className="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center max-w-2xl mx-auto mb-12">
             <h2 className="font-['Plus_Jakarta_Sans'] font-bold text-2xl sm:text-3xl text-[#182230] tracking-tight mb-2">
-              Organized by Document Type
+              Organized by Media & Document Type
             </h2>
             <p className="text-sm text-[#687386]">
-              Whether you need to fine-tune photo scans or compile formal PDF dossiers, Readyfile keeps your workflow clear.
+              Whether you need to fine-tune photo scans, edit video clips, or compile formal PDF dossiers, Readyfile keeps your workflow clear.
             </p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
             {/* Image Tools Category Card */}
             <div className="bg-[#FFFFFF] border border-[#E7EAF0] rounded-xl p-6 shadow-sm flex flex-col justify-between">
               <div>
@@ -146,7 +147,7 @@ export const Home: React.FC<HomeProps> = ({ onNavigate, onSelectTool }) => {
                   Image Tools (7)
                 </h3>
                 <p className="text-xs text-[#687386] leading-relaxed mb-4">
-                  Compress photos, adjust pixel dimensions, convert images into PDF, and upcoming passport photo tools.
+                  Compress photos, adjust pixel dimensions, crop ratios, convert formats, and create passport photos.
                 </p>
                 <div className="flex flex-wrap gap-1.5 mb-6">
                   <span className="text-[11px] px-2 py-0.5 rounded bg-[#F4F6FA] text-[#182230] border border-[#E7EAF0]">Compressor</span>
@@ -173,7 +174,7 @@ export const Home: React.FC<HomeProps> = ({ onNavigate, onSelectTool }) => {
                   PDF Tools (6)
                 </h3>
                 <p className="text-xs text-[#687386] leading-relaxed mb-4">
-                  Combine documents, split pages, compress heavy PDF files, and rotate orientations cleanly in memory.
+                  Combine documents, split pages, compress heavy files, reorder pages, and rotate orientations in memory.
                 </p>
                 <div className="flex flex-wrap gap-1.5 mb-6">
                   <span className="text-[11px] px-2 py-0.5 rounded bg-[#F4F6FA] text-[#182230] border border-[#E7EAF0]">PDF Merger</span>
@@ -190,6 +191,33 @@ export const Home: React.FC<HomeProps> = ({ onNavigate, onSelectTool }) => {
               </button>
             </div>
 
+            {/* Video Tools Category Card */}
+            <div className="bg-[#FFFFFF] border border-[#E7EAF0] rounded-xl p-6 shadow-sm flex flex-col justify-between">
+              <div>
+                <div className="w-12 h-12 rounded-lg bg-[#5278F5]/10 text-[#5278F5] flex items-center justify-center mb-4">
+                  <Film className="w-6 h-6" />
+                </div>
+                <h3 className="font-['Plus_Jakarta_Sans'] font-bold text-lg text-[#182230] mb-2">
+                  Video Tools (5)
+                </h3>
+                <p className="text-xs text-[#687386] leading-relaxed mb-4">
+                  Reduce video file sizes, trim clip ranges, strip audio noise, and extract high-resolution frame stills locally.
+                </p>
+                <div className="flex flex-wrap gap-1.5 mb-6">
+                  <span className="text-[11px] px-2 py-0.5 rounded bg-[#F4F6FA] text-[#182230] border border-[#E7EAF0]">Compressor</span>
+                  <span className="text-[11px] px-2 py-0.5 rounded bg-[#F4F6FA] text-[#182230] border border-[#E7EAF0]">Trimmer</span>
+                  <span className="text-[11px] px-2 py-0.5 rounded bg-[#F4F6FA] text-[#182230] border border-[#E7EAF0]">Thumbnails</span>
+                </div>
+              </div>
+              <button
+                onClick={() => onNavigate('/video-tools')}
+                className="w-full py-2.5 rounded-lg border border-[#E7EAF0] hover:bg-[#F4F6FA] text-xs font-semibold text-[#182230] flex items-center justify-center gap-1.5 transition-colors"
+              >
+                <span>Explore Video Tools</span>
+                <ArrowRight className="w-3.5 h-3.5" />
+              </button>
+            </div>
+
             {/* Document Preparation Category Card */}
             <div className="bg-[#FFFFFF] border border-[#E7EAF0] rounded-xl p-6 shadow-sm flex flex-col justify-between">
               <div>
@@ -200,7 +228,7 @@ export const Home: React.FC<HomeProps> = ({ onNavigate, onSelectTool }) => {
                   Doc Preparation (2)
                 </h3>
                 <p className="text-xs text-[#687386] leading-relaxed mb-4">
-                  Inspect byte caps, pixel boundaries, and formats with our File Requirement Checker and Document Checklist Builder.
+                  Inspect byte caps, pixel boundaries, and formats with our File Requirement Checker and Checklist Builder.
                 </p>
                 <div className="flex flex-wrap gap-1.5 mb-6">
                   <span className="text-[11px] px-2 py-0.5 rounded bg-[#24B47E]/10 text-[#24B47E] border border-[#24B47E]/20">Requirement Checker</span>

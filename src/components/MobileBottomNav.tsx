@@ -19,8 +19,16 @@ export const isNavActive = (itemPath: string, currentPath: string): boolean => {
   if (itemPath === '/tools') {
     return (
       currentPath === '/tools' ||
+      currentPath === '/video-tools' ||
       currentPath === '/tool/file-checker' ||
-      currentPath === '/tool/checklist-builder'
+      currentPath === '/tool/checklist-builder' ||
+      [
+        'video-compressor',
+        'video-trimmer',
+        'video-muter',
+        'video-thumbnail-maker',
+        'video-frame-extractor',
+      ].some((s) => currentPath === `/tool/${s}`)
     );
   }
   if (itemPath === '/pdf-tools') {

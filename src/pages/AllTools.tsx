@@ -12,7 +12,7 @@ interface AllToolsProps {
 
 export const AllTools: React.FC<AllToolsProps> = ({ onNavigate, onSelectTool }) => {
   const [searchQuery, setSearchQuery] = useState('');
-  const [filterCategory, setFilterCategory] = useState<'all' | 'active' | 'image' | 'pdf' | 'doc'>('all');
+  const [filterCategory, setFilterCategory] = useState<'all' | 'active' | 'image' | 'pdf' | 'video' | 'doc'>('all');
 
   const filteredTools = TOOLS.filter((tool) => {
     // Search query match
@@ -39,13 +39,13 @@ export const AllTools: React.FC<AllToolsProps> = ({ onNavigate, onSelectTool }) 
       <div className="bg-[#FFFFFF] border border-[#E7EAF0] rounded-xl p-6 sm:p-8 flex flex-col md:flex-row md:items-end justify-between gap-6 shadow-sm">
         <div>
           <div className="text-xs font-semibold uppercase tracking-wider text-[#5278F5] mb-1">
-            Readyfile Utility Suite (Version 1.2)
+            Readyfile Utility Suite (Document & Media)
           </div>
           <h1 className="font-['Plus_Jakarta_Sans'] font-bold text-2xl sm:text-3xl text-[#182230] tracking-tight mb-2">
-            All Document Tools ({TOOLS.length})
+            All Document & Media Tools ({TOOLS.length})
           </h1>
           <p className="text-sm text-[#687386] max-w-xl">
-            Explore all {activeCount} fully functional tools engineered to make document preparation and submission stress-free.
+            Explore all {activeCount} fully functional tools engineered to make document and video preparation stress-free.
           </p>
         </div>
 
@@ -69,6 +69,7 @@ export const AllTools: React.FC<AllToolsProps> = ({ onNavigate, onSelectTool }) 
           { id: 'active', label: `Active Now (${activeCount})` },
           { id: 'image', label: `Image Tools (${TOOLS.filter((t) => t.category === 'image').length})` },
           { id: 'pdf', label: `PDF Tools (${TOOLS.filter((t) => t.category === 'pdf').length})` },
+          { id: 'video', label: `Video Tools (${TOOLS.filter((t) => t.category === 'video').length})` },
           { id: 'doc', label: `Document Preparation (${TOOLS.filter((t) => t.category === 'doc').length})` },
         ].map((tab) => (
           <button

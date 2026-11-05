@@ -16,6 +16,11 @@ import { PdfToImages } from '../tools/PdfToImages';
 import { RotatePdf } from '../tools/RotatePdf';
 import { ReorderPdf } from '../tools/ReorderPdf';
 import { ChecklistBuilder } from '../tools/ChecklistBuilder';
+import { VideoCompressor } from '../tools/VideoCompressor';
+import { VideoTrimmer } from '../tools/VideoTrimmer';
+import { VideoMuter } from '../tools/VideoMuter';
+import { VideoThumbnailMaker } from '../tools/VideoThumbnailMaker';
+import { VideoFrameExtractor } from '../tools/VideoFrameExtractor';
 import { ComingSoonView } from '../components/ComingSoonView';
 import { ToolItem } from '../types';
 
@@ -61,6 +66,8 @@ export const ToolPage: React.FC<ToolPageProps> = ({
       ? '/image-tools'
       : tool.category === 'pdf'
       ? '/pdf-tools'
+      : tool.category === 'video'
+      ? '/video-tools'
       : '/tools';
 
   return (
@@ -132,6 +139,26 @@ export const ToolPage: React.FC<ToolPageProps> = ({
 
       {tool.slug === 'checklist-builder' && (
         <ChecklistBuilder />
+      )}
+
+      {tool.slug === 'video-compressor' && (
+        <VideoCompressor onNavigateToTool={(slug) => onNavigate(`/tool/${slug}`)} />
+      )}
+
+      {tool.slug === 'video-trimmer' && (
+        <VideoTrimmer onNavigateToTool={(slug) => onNavigate(`/tool/${slug}`)} />
+      )}
+
+      {tool.slug === 'video-muter' && (
+        <VideoMuter onNavigateToTool={(slug) => onNavigate(`/tool/${slug}`)} />
+      )}
+
+      {tool.slug === 'video-thumbnail-maker' && (
+        <VideoThumbnailMaker onNavigateToTool={(slug) => onNavigate(`/tool/${slug}`)} />
+      )}
+
+      {tool.slug === 'video-frame-extractor' && (
+        <VideoFrameExtractor onNavigateToTool={(slug) => onNavigate(`/tool/${slug}`)} />
       )}
     </div>
   );
