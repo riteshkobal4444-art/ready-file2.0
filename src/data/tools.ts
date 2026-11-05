@@ -133,7 +133,7 @@ export const TOOLS: ToolItem[] = [
     features: ['Page range extraction (e.g. 1-3, 5)', 'Split all pages into zip', 'Thumbnail selection preview', 'Fast client-side splitting'],
   },
 
-  // --- Coming Soon Tools (5) ---
+  // --- PDF Tools (Active V1.2) ---
   {
     id: 'pdf-compressor',
     slug: 'pdf-compressor',
@@ -142,10 +142,10 @@ export const TOOLS: ToolItem[] = [
     categoryName: 'PDF Tools',
     description: 'Downsample embedded raster images and compress PDF object streams to meet upload size caps.',
     tagline: 'Reduce heavy PDF document size for email and upload portals',
-    status: 'coming_soon',
+    status: 'active',
     icon: 'FileDown',
+    badge: 'New',
     features: ['Multiple compression presets', 'Embedded image optimization', 'Font stream compression', 'Visual quality protection'],
-    plannedRelease: 'Version 1.1',
   },
   {
     id: 'pdf-to-images',
@@ -155,10 +155,10 @@ export const TOOLS: ToolItem[] = [
     categoryName: 'PDF Tools',
     description: 'Render every page of your PDF into high-resolution JPG or PNG images ready for presentations and web display.',
     tagline: 'Extract high-resolution image pages from any PDF',
-    status: 'coming_soon',
+    status: 'active',
     icon: 'Images',
+    badge: 'New',
     features: ['PNG & JPG export', 'Selectable DPI resolution', 'Batch zip download', 'Single page selective export'],
-    plannedRelease: 'Version 1.2',
   },
   {
     id: 'rotate-pdf',
@@ -168,10 +168,10 @@ export const TOOLS: ToolItem[] = [
     categoryName: 'PDF Tools',
     description: 'Fix upside-down or sideways pages. Rotate individual pages or all pages 90, 180, or 270 degrees clockwise.',
     tagline: 'Permanently orient rotated or upside-down scanned pages',
-    status: 'coming_soon',
+    status: 'active',
     icon: 'RotateCw',
+    badge: 'New',
     features: ['Per-page orientation control', 'Rotate all at once', 'Visual grid preview', 'Lossless rotation metadata'],
-    plannedRelease: 'Version 1.1',
   },
   {
     id: 'reorder-pdf',
@@ -181,13 +181,13 @@ export const TOOLS: ToolItem[] = [
     categoryName: 'PDF Tools',
     description: 'Drag and drop PDF page thumbnails to rearrange pages in the exact sequence required before submission.',
     tagline: 'Rearrange page sequences visually with drag and drop',
-    status: 'coming_soon',
+    status: 'active',
     icon: 'ArrowUpDown',
+    badge: 'New',
     features: ['Visual thumbnail grid', 'Drag and drop sorting', 'Delete unwanted individual pages', 'Export new clean sequence'],
-    plannedRelease: 'Version 1.2',
   },
 
-  // Document Preparation (1 coming soon)
+  // Document Preparation (Active V1.2)
   {
     id: 'checklist-builder',
     slug: 'checklist-builder',
@@ -196,10 +196,10 @@ export const TOOLS: ToolItem[] = [
     categoryName: 'Document Preparation',
     description: 'Build an interactive checklist for visa applications, mortgage submissions, university admissions, or job onboarding.',
     tagline: 'Organize required documents and track verification status',
-    status: 'coming_soon',
+    status: 'active',
     icon: 'ListChecks',
+    badge: 'New',
     features: ['Pre-built application templates', 'Custom requirements creator', 'Document progress tracking', 'Exportable preparation summary'],
-    plannedRelease: 'Version 1.2',
   },
 ];
 

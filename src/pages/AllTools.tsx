@@ -45,7 +45,7 @@ export const AllTools: React.FC<AllToolsProps> = ({ onNavigate, onSelectTool }) 
             All Document Tools ({TOOLS.length})
           </h1>
           <p className="text-sm text-[#687386] max-w-xl">
-            Explore {activeCount} fully functional tools and preview {comingSoonCount} upcoming tools engineered to make document preparation and submission stress-free.
+            Explore all {activeCount} fully functional tools engineered to make document preparation and submission stress-free.
           </p>
         </div>
 
@@ -93,12 +93,14 @@ export const AllTools: React.FC<AllToolsProps> = ({ onNavigate, onSelectTool }) 
         <div className="flex items-center gap-3">
           <span className="inline-flex items-center gap-1 text-[#24B47E]">
             <span className="w-2 h-2 rounded-full bg-[#24B47E]" />
-            {activeCount} Functional
+            {activeCount} Active Tools
           </span>
-          <span className="inline-flex items-center gap-1 text-[#687386]">
-            <span className="w-2 h-2 rounded-full bg-[#C4C5D6]" />
-            {comingSoonCount} Coming Soon
-          </span>
+          {comingSoonCount > 0 && (
+            <span className="inline-flex items-center gap-1 text-[#687386]">
+              <span className="w-2 h-2 rounded-full bg-[#C4C5D6]" />
+              {comingSoonCount} Coming Soon
+            </span>
+          )}
         </div>
       </div>
 

@@ -111,7 +111,7 @@ export const Home: React.FC<HomeProps> = ({ onNavigate, onSelectTool }) => {
             onClick={() => onNavigate('/tools')}
             className="text-xs font-medium text-[#5278F5] hover:underline flex items-center gap-1 self-start sm:self-auto"
           >
-            <span>View all 15 planned tools</span>
+            <span>View all 15 tools</span>
             <ArrowRight className="w-3.5 h-3.5" />
           </button>
         </div>
@@ -200,7 +200,7 @@ export const Home: React.FC<HomeProps> = ({ onNavigate, onSelectTool }) => {
                   Doc Preparation (2)
                 </h3>
                 <p className="text-xs text-[#687386] leading-relaxed mb-4">
-                  Inspect byte caps, pixel boundaries, and formats with our File Requirement Checker and upcoming Checklist Builder.
+                  Inspect byte caps, pixel boundaries, and formats with our File Requirement Checker and Document Checklist Builder.
                 </p>
                 <div className="flex flex-wrap gap-1.5 mb-6">
                   <span className="text-[11px] px-2 py-0.5 rounded bg-[#24B47E]/10 text-[#24B47E] border border-[#24B47E]/20">Requirement Checker</span>

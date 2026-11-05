@@ -36,11 +36,13 @@ export const PdfToolsPage: React.FC<PdfToolsPageProps> = ({ onNavigate, onSelect
 
         <div className="flex items-center gap-2 text-xs">
           <span className="px-3 py-1.5 rounded-full bg-[#24B47E]/10 border border-[#24B47E]/20 text-[#24B47E] font-medium">
-            {activeCount} Active Now
+            {activeCount} Active Tools
           </span>
-          <span className="px-3 py-1.5 rounded-full bg-[#F4F6FA] border border-[#E7EAF0] text-[#687386] font-medium">
-            {comingSoonCount} Coming Soon
-          </span>
+          {comingSoonCount > 0 && (
+            <span className="px-3 py-1.5 rounded-full bg-[#F4F6FA] border border-[#E7EAF0] text-[#687386] font-medium">
+              {comingSoonCount} Coming Soon
+            </span>
+          )}
         </div>
       </div>
 

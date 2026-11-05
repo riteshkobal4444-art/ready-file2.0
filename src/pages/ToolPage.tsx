@@ -11,6 +11,11 @@ import { ImageConverter } from '../tools/ImageConverter';
 import { PassportPhoto } from '../tools/PassportPhoto';
 import { SignatureMaker } from '../tools/SignatureMaker';
 import { PdfSplitter } from '../tools/PdfSplitter';
+import { PdfCompressor } from '../tools/PdfCompressor';
+import { PdfToImages } from '../tools/PdfToImages';
+import { RotatePdf } from '../tools/RotatePdf';
+import { ReorderPdf } from '../tools/ReorderPdf';
+import { ChecklistBuilder } from '../tools/ChecklistBuilder';
 import { ComingSoonView } from '../components/ComingSoonView';
 import { ToolItem } from '../types';
 
@@ -107,6 +112,26 @@ export const ToolPage: React.FC<ToolPageProps> = ({
 
       {tool.slug === 'pdf-splitter' && (
         <PdfSplitter onNavigateToTool={(slug) => onNavigate(`/tool/${slug}`)} />
+      )}
+
+      {tool.slug === 'pdf-compressor' && (
+        <PdfCompressor onNavigateToTool={(slug) => onNavigate(`/tool/${slug}`)} />
+      )}
+
+      {tool.slug === 'pdf-to-images' && (
+        <PdfToImages onNavigateToTool={(slug) => onNavigate(`/tool/${slug}`)} />
+      )}
+
+      {tool.slug === 'rotate-pdf' && (
+        <RotatePdf />
+      )}
+
+      {tool.slug === 'reorder-pdf' && (
+        <ReorderPdf onNavigateToTool={(slug) => onNavigate(`/tool/${slug}`)} />
+      )}
+
+      {tool.slug === 'checklist-builder' && (
+        <ChecklistBuilder />
       )}
     </div>
   );

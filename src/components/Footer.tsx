@@ -83,23 +83,19 @@ export const Footer: React.FC<FooterProps> = ({ onNavigate }) => {
             </ul>
           </div>
 
-          {/* Column 2: Active Tools */}
+          {/* Column 2: PDF Tools */}
           <div>
             <h4 className="text-xs font-semibold uppercase tracking-wider text-[#687386] mb-4">
-              Active Tools (10)
+              PDF Tools (6)
             </h4>
             <ul className="space-y-2 text-xs">
               {[
-                { name: 'Image Compressor', slug: 'image-compressor' },
-                { name: 'Image Resizer', slug: 'image-resizer' },
-                { name: 'Image to PDF', slug: 'image-to-pdf' },
-                { name: 'Image Cropper', slug: 'image-cropper' },
-                { name: 'Format Converter', slug: 'image-converter' },
-                { name: 'Passport Photo', slug: 'passport-photo' },
-                { name: 'Signature Maker', slug: 'signature-maker' },
                 { name: 'PDF Merger', slug: 'pdf-merger' },
                 { name: 'PDF Splitter', slug: 'pdf-splitter' },
-                { name: 'Requirement Checker', slug: 'file-checker' },
+                { name: 'PDF Compressor', slug: 'pdf-compressor' },
+                { name: 'PDF to Images', slug: 'pdf-to-images' },
+                { name: 'Rotate PDF', slug: 'rotate-pdf' },
+                { name: 'Reorder PDF Pages', slug: 'reorder-pdf' },
               ].map((t) => (
                 <li key={t.slug}>
                   <button
@@ -114,52 +110,33 @@ export const Footer: React.FC<FooterProps> = ({ onNavigate }) => {
             </ul>
           </div>
 
-          {/* Column 3: Coming Soon Tools */}
+          {/* Column 3: Image & Utility Tools */}
           <div>
             <h4 className="text-xs font-semibold uppercase tracking-wider text-[#687386] mb-4">
-              Coming Soon (5)
+              Image & Utility Tools (9)
             </h4>
-            <ul className="space-y-2.5 text-xs text-[#687386]">
-              <li>
-                <button
-                  onClick={() => handleNav('/tool/pdf-compressor')}
-                  className="hover:text-[#182230] transition-colors"
-                >
-                  PDF Compressor
-                </button>
-              </li>
-              <li>
-                <button
-                  onClick={() => handleNav('/tool/pdf-to-images')}
-                  className="hover:text-[#182230] transition-colors"
-                >
-                  PDF to Images
-                </button>
-              </li>
-              <li>
-                <button
-                  onClick={() => handleNav('/tool/rotate-pdf')}
-                  className="hover:text-[#182230] transition-colors"
-                >
-                  Rotate PDF
-                </button>
-              </li>
-              <li>
-                <button
-                  onClick={() => handleNav('/tool/reorder-pdf')}
-                  className="hover:text-[#182230] transition-colors"
-                >
-                  Reorder PDF Pages
-                </button>
-              </li>
-              <li>
-                <button
-                  onClick={() => handleNav('/tool/checklist-builder')}
-                  className="hover:text-[#182230] transition-colors"
-                >
-                  Document Checklist Builder
-                </button>
-              </li>
+            <ul className="space-y-2 text-xs">
+              {[
+                { name: 'Image Compressor', slug: 'image-compressor' },
+                { name: 'Image Resizer', slug: 'image-resizer' },
+                { name: 'Image to PDF', slug: 'image-to-pdf' },
+                { name: 'Image Cropper', slug: 'image-cropper' },
+                { name: 'Format Converter', slug: 'image-converter' },
+                { name: 'Passport Photo', slug: 'passport-photo' },
+                { name: 'Signature Maker', slug: 'signature-maker' },
+                { name: 'Requirement Checker', slug: 'file-checker' },
+                { name: 'Checklist Builder', slug: 'checklist-builder' },
+              ].map((t) => (
+                <li key={t.slug}>
+                  <button
+                    onClick={() => handleNav(`/tool/${t.slug}`)}
+                    className="text-[#182230] hover:text-[#5278F5] transition-colors flex items-center gap-1.5"
+                  >
+                    <span>{t.name}</span>
+                    <span className="w-1.5 h-1.5 rounded-full bg-[#24B47E]" />
+                  </button>
+                </li>
+              ))}
             </ul>
           </div>
         </div>
