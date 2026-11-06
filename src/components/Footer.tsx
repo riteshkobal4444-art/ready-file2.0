@@ -32,6 +32,9 @@ export const Footer: React.FC<FooterProps> = ({ onNavigate }) => {
               <Shield className="w-4 h-4 text-[#24B47E]" />
               <span>Zero server uploads. 100% private browser processing.</span>
             </div>
+            <p className="text-[11px] text-[#687386] max-w-sm leading-normal pt-1">
+              Privacy Promise: Files never leave your device. Anonymized performance analytics (Google Analytics & Vercel Analytics) help us maintain app health without collecting document data, file names, or personal identities.
+            </p>
           </div>
 
           {/* Column 1: Navigation */}

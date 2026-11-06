@@ -24,6 +24,12 @@ import {
 } from '../services/requirementService';
 import { RequirementPreset, RequirementCheckResult } from '../types';
 import { formatBytes } from '../utils/fileHelpers';
+import { 
+  trackFileUpload, 
+  trackProcessingStarted, 
+  trackProcessingSuccess, 
+  trackProcessingFailed 
+} from '../utils/analytics';
 
 interface RequirementCheckerProps {
   onNavigateToTool?: (toolSlug: string) => void;
@@ -74,6 +80,8 @@ export const RequirementChecker: React.FC<RequirementCheckerProps> = ({ onNaviga
     if (files.length === 0) return;
     setError(null);
     setIsAnalyzing(true);
+    trackFileUpload('File Requirement Checker', 'Document Preparation', files[0]?.type);
+    trackProcessingStarted('File Requirement Checker', 'Document Preparation', files[0]?.type);
 
     try {
       const currentPreset = getActivePreset();
@@ -86,7 +94,9 @@ export const RequirementChecker: React.FC<RequirementCheckerProps> = ({ onNaviga
       }
 
       setAnalyzedFiles(results);
+      trackProcessingSuccess('File Requirement Checker', 'Document Preparation', files[0]?.type);
     } catch (err: unknown) {
+      trackProcessingFailed('File Requirement Checker', 'Document Preparation', err, files[0]?.type);
       setError(err instanceof Error ? err.message : 'Error evaluating file specifications.');
     } finally {
       setIsAnalyzing(false);

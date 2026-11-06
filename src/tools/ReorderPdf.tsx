@@ -21,6 +21,13 @@ import { inspectPdfFile, PdfFileInfo } from '../services/pdfService';
 import { loadPdfJsDoc, renderPdfPageThumbnail } from '../services/pdfRenderer';
 import { reorderPdfPages } from '../services/pdfReorderService';
 import { formatBytes, downloadBlob, sanitizeFileName } from '../utils/fileHelpers';
+import { 
+  trackFileUpload, 
+  trackProcessingStarted, 
+  trackProcessingSuccess, 
+  trackProcessingFailed, 
+  trackFileDownload 
+} from '../utils/analytics';
 
 interface PageItem {
   originalPageNumber: number; // 1-based original index
@@ -86,6 +93,7 @@ export const ReorderPdf: React.FC<ReorderPdfProps> = () => {
 
     setSelectedFile(file);
     setPdfInfo(info);
+    trackFileUpload('reorder_pdf', 'pdf', file.type || 'application/pdf');
 
     const initialPages: PageItem[] = Array.from({ length: info.pageCount }, (_, i) => ({
       originalPageNumber: i + 1,
@@ -187,13 +195,17 @@ export const ReorderPdf: React.FC<ReorderPdfProps> = () => {
     if (!selectedFile || pageSequence.length === 0) return;
     setIsProcessing(true);
     setError(null);
+    trackProcessingStarted('reorder_pdf', 'pdf');
 
     try {
       const order = pageSequence.map((item) => item.originalPageNumber);
       const blob = await reorderPdfPages(selectedFile, order);
       setReorderedBlob(blob);
+      trackProcessingSuccess('reorder_pdf', 'pdf');
     } catch (err: unknown) {
-      setError(err instanceof Error ? err.message : 'Failed to reorder PDF pages.');
+      const msg = err instanceof Error ? err.message : 'Failed to reorder PDF pages.';
+      setError(msg);
+      trackProcessingFailed('reorder_pdf', 'pdf', msg);
     } finally {
       setIsProcessing(false);
     }
@@ -203,6 +215,7 @@ export const ReorderPdf: React.FC<ReorderPdfProps> = () => {
     if (!reorderedBlob || !selectedFile) return;
     const filename = sanitizeFileName(selectedFile.name, '_reordered', 'pdf');
     downloadBlob(reorderedBlob, filename);
+    trackFileDownload('reorder_pdf', 'pdf', 'application/pdf');
   };
 
   const handleResetAll = () => {

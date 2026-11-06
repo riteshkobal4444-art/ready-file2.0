@@ -19,6 +19,13 @@ import { ProcessingState } from '../components/ProcessingState';
 import { ErrorMessage } from '../components/ErrorMessage';
 import { inspectPdfFile, mergePdfFiles, PdfFileInfo } from '../services/pdfService';
 import { formatBytes, downloadBlob } from '../utils/fileHelpers';
+import { 
+  trackFileUpload, 
+  trackProcessingStarted, 
+  trackProcessingSuccess, 
+  trackProcessingFailed, 
+  trackFileDownload 
+} from '../utils/analytics';
 
 interface PdfMergerProps {
   onNavigateToTool?: (toolSlug: string) => void;
@@ -61,6 +68,7 @@ export const PdfMerger: React.FC<PdfMergerProps> = ({ onNavigateToTool }) => {
     }
 
     if (inspected.length > 0) {
+      trackFileUpload('PDF Merger', 'PDF Tools', 'application/pdf');
       setPdfItems((prev) => [...prev, ...inspected]);
     }
   };
@@ -92,18 +100,22 @@ export const PdfMerger: React.FC<PdfMergerProps> = ({ onNavigateToTool }) => {
     const encryptedFile = pdfItems.find((p) => p.isEncrypted);
     if (encryptedFile) {
       setError(`Cannot merge: "${encryptedFile.name}" is password-protected. Please unlock it before merging.`);
+      trackProcessingFailed('PDF Merger', 'PDF Tools', 'password_protected', 'application/pdf');
       return;
     }
 
     setIsProcessing(true);
     setError(null);
+    trackProcessingStarted('PDF Merger', 'PDF Tools', 'application/pdf');
 
     try {
       const files = pdfItems.map((p) => p.file);
       const res = await mergePdfFiles(files);
       setMergedBlob(res.blob);
       setMergedTotalPages(res.totalPages);
+      trackProcessingSuccess('PDF Merger', 'PDF Tools', 'application/pdf');
     } catch (err: unknown) {
+      trackProcessingFailed('PDF Merger', 'PDF Tools', err, 'application/pdf');
       setError(err instanceof Error ? err.message : 'Merging failed. One of the documents may contain corrupted objects.');
     } finally {
       setIsProcessing(false);
@@ -112,6 +124,7 @@ export const PdfMerger: React.FC<PdfMergerProps> = ({ onNavigateToTool }) => {
 
   const handleDownload = () => {
     if (!mergedBlob) return;
+    trackFileDownload('PDF Merger', 'PDF Tools', 'application/pdf');
     downloadBlob(mergedBlob, 'readyfile-merged.pdf');
   };
 

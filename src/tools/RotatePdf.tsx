@@ -16,6 +16,13 @@ import { inspectPdfFile, PdfFileInfo } from '../services/pdfService';
 import { loadPdfJsDoc, renderPdfPageThumbnail } from '../services/pdfRenderer';
 import { applyRotationsToPdf, PageRotationMap } from '../services/pdfRotateService';
 import { formatBytes, downloadBlob, sanitizeFileName } from '../utils/fileHelpers';
+import { 
+  trackFileUpload, 
+  trackProcessingStarted, 
+  trackProcessingSuccess, 
+  trackProcessingFailed, 
+  trackFileDownload 
+} from '../utils/analytics';
 
 export const RotatePdf: React.FC = () => {
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
@@ -60,6 +67,7 @@ export const RotatePdf: React.FC = () => {
 
     setSelectedFile(file);
     setPdfInfo(info);
+    trackFileUpload('rotate_pdf', 'pdf', file.type || 'application/pdf');
 
     // Load thumbnails
     setIsLoadingThumbnails(true);
@@ -105,12 +113,16 @@ export const RotatePdf: React.FC = () => {
     if (!selectedFile || !pdfInfo) return;
     setIsProcessing(true);
     setError(null);
+    trackProcessingStarted('rotate_pdf', 'pdf');
 
     try {
       const blob = await applyRotationsToPdf(selectedFile, rotations);
       setRotatedBlob(blob);
+      trackProcessingSuccess('rotate_pdf', 'pdf');
     } catch (err: unknown) {
-      setError(err instanceof Error ? err.message : 'Failed to apply rotations to PDF.');
+      const msg = err instanceof Error ? err.message : 'Failed to apply rotations to PDF.';
+      setError(msg);
+      trackProcessingFailed('rotate_pdf', 'pdf', msg);
     } finally {
       setIsProcessing(false);
     }
@@ -120,6 +132,7 @@ export const RotatePdf: React.FC = () => {
     if (!rotatedBlob || !selectedFile) return;
     const filename = sanitizeFileName(selectedFile.name, '_rotated', 'pdf');
     downloadBlob(rotatedBlob, filename);
+    trackFileDownload('rotate_pdf', 'pdf', 'application/pdf');
   };
 
   const handleReset = () => {

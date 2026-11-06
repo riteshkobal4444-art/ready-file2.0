@@ -15,6 +15,13 @@ import { ProcessingState } from '../components/ProcessingState';
 import { ErrorMessage } from '../components/ErrorMessage';
 import { compressImage, hasTransparency, CompressionResult } from '../services/imageService';
 import { formatBytes, downloadBlob, sanitizeFileName } from '../utils/fileHelpers';
+import { 
+  trackFileUpload, 
+  trackProcessingStarted, 
+  trackProcessingSuccess, 
+  trackProcessingFailed, 
+  trackFileDownload 
+} from '../utils/analytics';
 
 interface ImageCompressorProps {
   onNavigateToTool?: (toolSlug: string) => void;
@@ -47,6 +54,7 @@ export const ImageCompressor: React.FC<ImageCompressorProps> = ({ onNavigateToTo
       const alpha = await hasTransparency(file);
       setHasAlpha(alpha);
       setSelectedFile(file);
+      trackFileUpload('Image Compressor', 'Image Tools', file.type);
 
       const objectUrl = URL.createObjectURL(file);
       setPreviewSrc(objectUrl);
@@ -59,6 +67,7 @@ export const ImageCompressor: React.FC<ImageCompressorProps> = ({ onNavigateToTo
     if (!selectedFile) return;
     setIsProcessing(true);
     setError(null);
+    trackProcessingStarted('Image Compressor', 'Image Tools', selectedFile.type);
 
     try {
       const res = await compressImage(selectedFile, {
@@ -66,7 +75,9 @@ export const ImageCompressor: React.FC<ImageCompressorProps> = ({ onNavigateToTo
         outputFormat,
       });
       setResult(res);
+      trackProcessingSuccess('Image Compressor', 'Image Tools', res.mimeType);
     } catch (err: unknown) {
+      trackProcessingFailed('Image Compressor', 'Image Tools', err, selectedFile.type);
       setError(err instanceof Error ? err.message : 'Compression failed. Please try a different quality level or image.');
     } finally {
       setIsProcessing(false);
@@ -77,6 +88,7 @@ export const ImageCompressor: React.FC<ImageCompressorProps> = ({ onNavigateToTo
     if (!result || !selectedFile) return;
     const ext = result.mimeType.split('/')[1] || 'jpg';
     const filename = sanitizeFileName(selectedFile.name, '-compressed', ext);
+    trackFileDownload('Image Compressor', 'Image Tools', result.mimeType);
     downloadBlob(result.blob, filename);
   };
 

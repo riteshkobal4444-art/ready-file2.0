@@ -23,6 +23,13 @@ import {
   isMimeSupported 
 } from '../services/converterService';
 import { formatBytes, downloadBlob, sanitizeFileName, getFileExtension } from '../utils/fileHelpers';
+import { 
+  trackFileUpload, 
+  trackProcessingStarted, 
+  trackProcessingSuccess, 
+  trackProcessingFailed, 
+  trackFileDownload 
+} from '../utils/analytics';
 
 interface ImageConverterProps {
   onNavigateToTool?: (toolSlug: string) => void;
@@ -71,6 +78,10 @@ export const ImageConverter: React.FC<ImageConverterProps> = ({ onNavigateToTool
       return;
     }
 
+    if (newItems.length > 0) {
+      trackFileUpload('Image Format Converter', 'Image Tools', 'image');
+    }
+
     setItems((prev) => [...prev, ...newItems]);
   };
 
@@ -106,6 +117,7 @@ export const ImageConverter: React.FC<ImageConverterProps> = ({ onNavigateToTool
 
     setIsConverting(true);
     setError(null);
+    trackProcessingStarted('Image Format Converter', 'Image Tools', outputFormat);
 
     const updated = [...items];
 
@@ -125,9 +137,11 @@ export const ImageConverter: React.FC<ImageConverterProps> = ({ onNavigateToTool
         item.convertedUrl = url;
         item.convertedSize = blob.size;
         item.outputFormat = outputFormat;
+        trackProcessingSuccess('Image Format Converter', 'Image Tools', outputFormat);
       } catch (err: unknown) {
         item.status = 'error';
         item.error = err instanceof Error ? err.message : 'Conversion failed';
+        trackProcessingFailed('Image Format Converter', 'Image Tools', err, outputFormat);
       }
 
       setItems([...updated]);
@@ -141,6 +155,7 @@ export const ImageConverter: React.FC<ImageConverterProps> = ({ onNavigateToTool
     if (!item.convertedBlob) return;
     const ext = item.outputFormat || outputFormat;
     const filename = sanitizeFileName(item.file.name, '_converted', ext);
+    trackFileDownload('Image Format Converter', 'Image Tools', ext);
     downloadBlob(item.convertedBlob, filename);
   };
 
@@ -154,6 +169,7 @@ export const ImageConverter: React.FC<ImageConverterProps> = ({ onNavigateToTool
     }));
 
     const zipBlob = await createConvertedZip(zipList);
+    trackFileDownload('Image Format Converter', 'Image Tools', 'application/zip');
     downloadBlob(zipBlob, `readyfile_converted_${outputFormat}.zip`);
   };
 

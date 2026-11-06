@@ -16,6 +16,13 @@ import { ProcessingState } from '../components/ProcessingState';
 import { ErrorMessage } from '../components/ErrorMessage';
 import { executeCrop, CropResult, CropRect, loadImage } from '../services/cropService';
 import { formatBytes, downloadBlob, sanitizeFileName } from '../utils/fileHelpers';
+import { 
+  trackFileUpload, 
+  trackProcessingStarted, 
+  trackProcessingSuccess, 
+  trackProcessingFailed, 
+  trackFileDownload 
+} from '../utils/analytics';
 
 interface ImageCropperProps {
   onNavigateToTool?: (toolSlug: string) => void;
@@ -71,6 +78,7 @@ export const ImageCropper: React.FC<ImageCropperProps> = ({ onNavigateToTool }) 
       const img = await loadImage(file);
       setNaturalDims({ width: img.naturalWidth, height: img.naturalHeight });
       setSelectedFile(file);
+      trackFileUpload('Image Cropper', 'Image Tools', file.type);
       setPreviewSrc(URL.createObjectURL(file));
       setRotation(0);
       setCropBox({ x: 10, y: 10, width: 80, height: 80 });
@@ -204,6 +212,7 @@ export const ImageCropper: React.FC<ImageCropperProps> = ({ onNavigateToTool }) 
     if (!selectedFile) return;
     setIsProcessing(true);
     setError(null);
+    trackProcessingStarted('Image Cropper', 'Image Tools', selectedFile.type);
 
     try {
       const cropRect: CropRect = {
@@ -221,7 +230,9 @@ export const ImageCropper: React.FC<ImageCropperProps> = ({ onNavigateToTool }) 
       });
 
       setResult(res);
+      trackProcessingSuccess('Image Cropper', 'Image Tools', res.mimeType);
     } catch (err: unknown) {
+      trackProcessingFailed('Image Cropper', 'Image Tools', err, selectedFile.type);
       setError(err instanceof Error ? err.message : 'Cropping failed. Please try a different selection.');
     } finally {
       setIsProcessing(false);
@@ -232,6 +243,7 @@ export const ImageCropper: React.FC<ImageCropperProps> = ({ onNavigateToTool }) 
     if (!result || !selectedFile) return;
     const ext = result.mimeType.split('/')[1] || 'jpg';
     const filename = sanitizeFileName(selectedFile.name, `_cropped_${result.width}x${result.height}`, ext);
+    trackFileDownload('Image Cropper', 'Image Tools', result.mimeType);
     downloadBlob(result.blob, filename);
   };
 

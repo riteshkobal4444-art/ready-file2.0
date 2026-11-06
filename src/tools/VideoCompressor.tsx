@@ -20,6 +20,13 @@ import { ErrorMessage } from '../components/ErrorMessage';
 import { inspectVideoFile, formatTimecode, VideoFileInfo } from '../services/videoService';
 import { compressVideo, CompressOptions } from '../services/ffmpegService';
 import { formatBytes, downloadBlob, sanitizeFileName } from '../utils/fileHelpers';
+import { 
+  trackFileUpload, 
+  trackProcessingStarted, 
+  trackProcessingSuccess, 
+  trackProcessingFailed, 
+  trackFileDownload 
+} from '../utils/analytics';
 
 interface VideoCompressorProps {
   onNavigateToTool?: (slug: string) => void;
@@ -73,6 +80,7 @@ export const VideoCompressor: React.FC<VideoCompressorProps> = () => {
 
     setSelectedFile(file);
     setVideoInfo(info);
+    trackFileUpload('video_compressor', 'video', file.type || 'video/mp4');
 
     // Initial sensible target size suggestion (e.g. 50% of original or 15MB)
     const initialTarget = Math.max(5, Math.min(50, Math.round((file.size / (1024 * 1024)) * 0.5)));
@@ -86,6 +94,7 @@ export const VideoCompressor: React.FC<VideoCompressorProps> = () => {
     setError(null);
     setProgressPercent(0);
     setProgressMessage('Compacting video bitrate with libx264...');
+    trackProcessingStarted('video_compressor', 'video');
 
     const options: CompressOptions = {
       preset,
@@ -113,8 +122,11 @@ export const VideoCompressor: React.FC<VideoCompressorProps> = () => {
         compressedSize: result.compressedSize,
         previewUrl,
       });
+      trackProcessingSuccess('video_compressor', 'video');
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to compress video.');
+      const msg = err instanceof Error ? err.message : 'Failed to compress video.';
+      setError(msg);
+      trackProcessingFailed('video_compressor', 'video', msg);
     } finally {
       setIsProcessing(false);
     }
@@ -124,6 +136,7 @@ export const VideoCompressor: React.FC<VideoCompressorProps> = () => {
     if (!compressedResult || !selectedFile) return;
     const filename = sanitizeFileName(selectedFile.name, '_compressed', 'mp4');
     downloadBlob(compressedResult.blob, filename);
+    trackFileDownload('video_compressor', 'video', 'video/mp4');
   };
 
   const handleReset = () => {

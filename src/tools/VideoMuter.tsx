@@ -18,6 +18,13 @@ import { ErrorMessage } from '../components/ErrorMessage';
 import { inspectVideoFile, formatTimecode, VideoFileInfo } from '../services/videoService';
 import { muteVideo, detectAudioTrack } from '../services/ffmpegService';
 import { formatBytes, downloadBlob, sanitizeFileName } from '../utils/fileHelpers';
+import { 
+  trackFileUpload, 
+  trackProcessingStarted, 
+  trackProcessingSuccess, 
+  trackProcessingFailed, 
+  trackFileDownload 
+} from '../utils/analytics';
 
 interface VideoMuterProps {
   onNavigateToTool?: (slug: string) => void;
@@ -63,6 +70,7 @@ export const VideoMuter: React.FC<VideoMuterProps> = () => {
 
     setSelectedFile(file);
     setVideoInfo(info);
+    trackFileUpload('video_muter', 'video', file.type || 'video/mp4');
 
     // Audio stream detection
     setIsDetectingAudio(true);
@@ -84,6 +92,7 @@ export const VideoMuter: React.FC<VideoMuterProps> = () => {
     setError(null);
     setProgressPercent(0);
     setProgressMessage('Stripping audio tracks and re-packaging video streams...');
+    trackProcessingStarted('video_muter', 'video');
 
     try {
       const blob = await muteVideo(selectedFile, (p) => {
@@ -96,8 +105,11 @@ export const VideoMuter: React.FC<VideoMuterProps> = () => {
 
       setMutedBlob(blob);
       setMutedPreviewUrl(url);
+      trackProcessingSuccess('video_muter', 'video');
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to remove audio from video.');
+      const msg = err instanceof Error ? err.message : 'Failed to remove audio from video.';
+      setError(msg);
+      trackProcessingFailed('video_muter', 'video', msg);
     } finally {
       setIsProcessing(false);
     }
@@ -107,6 +119,7 @@ export const VideoMuter: React.FC<VideoMuterProps> = () => {
     if (!mutedBlob || !selectedFile) return;
     const filename = sanitizeFileName(selectedFile.name, '_muted', 'mp4');
     downloadBlob(mutedBlob, filename);
+    trackFileDownload('video_muter', 'video', 'video/mp4');
   };
 
   const handleReset = () => {

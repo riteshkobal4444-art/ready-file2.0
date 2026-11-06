@@ -17,6 +17,13 @@ import { ProcessingState } from '../components/ProcessingState';
 import { ErrorMessage } from '../components/ErrorMessage';
 import { convertImagesToPdf, ImageToPdfItem, ImageToPdfOptions } from '../services/pdfService';
 import { getImageDimensions, formatBytes, downloadBlob } from '../utils/fileHelpers';
+import { 
+  trackFileUpload, 
+  trackProcessingStarted, 
+  trackProcessingSuccess, 
+  trackProcessingFailed, 
+  trackFileDownload 
+} from '../utils/analytics';
 
 interface ImageToPdfProps {
   onNavigateToTool?: (toolSlug: string) => void;
@@ -59,6 +66,7 @@ export const ImageToPdf: React.FC<ImageToPdfProps> = ({ onNavigateToTool }) => {
       return;
     }
 
+    trackFileUpload('Image to PDF', 'Image Tools', 'image');
     setItems((prev) => [...prev, ...newItems]);
   };
 
@@ -91,6 +99,7 @@ export const ImageToPdf: React.FC<ImageToPdfProps> = ({ onNavigateToTool }) => {
 
     setIsProcessing(true);
     setError(null);
+    trackProcessingStarted('Image to PDF', 'Image Tools', 'image');
 
     try {
       const blob = await convertImagesToPdf(items, {
@@ -100,7 +109,9 @@ export const ImageToPdf: React.FC<ImageToPdfProps> = ({ onNavigateToTool }) => {
       const url = URL.createObjectURL(blob);
       setGeneratedPdfBlob(blob);
       setPdfPreviewUrl(url);
+      trackProcessingSuccess('Image to PDF', 'Image Tools', 'application/pdf');
     } catch (err: unknown) {
+      trackProcessingFailed('Image to PDF', 'Image Tools', err, 'image');
       setError(err instanceof Error ? err.message : 'Failed to generate PDF document.');
     } finally {
       setIsProcessing(false);
@@ -110,6 +121,7 @@ export const ImageToPdf: React.FC<ImageToPdfProps> = ({ onNavigateToTool }) => {
   const handleDownload = () => {
     if (!generatedPdfBlob) return;
     const baseName = items.length === 1 ? items[0].file.name.replace(/\.[^/.]+$/, '') : 'readyfile-document';
+    trackFileDownload('Image to PDF', 'Image Tools', 'application/pdf');
     downloadBlob(generatedPdfBlob, `${baseName}.pdf`);
   };
 

@@ -15,6 +15,13 @@ import { ProcessingState } from '../components/ProcessingState';
 import { ErrorMessage } from '../components/ErrorMessage';
 import { resizeImage, ResizeResult } from '../services/imageService';
 import { getImageDimensions, formatBytes, downloadBlob, sanitizeFileName } from '../utils/fileHelpers';
+import { 
+  trackFileUpload, 
+  trackProcessingStarted, 
+  trackProcessingSuccess, 
+  trackProcessingFailed, 
+  trackFileDownload 
+} from '../utils/analytics';
 
 interface ImageResizerProps {
   onNavigateToTool?: (toolSlug: string) => void;
@@ -51,6 +58,7 @@ export const ImageResizer: React.FC<ImageResizerProps> = ({ onNavigateToTool }) 
       setWidth(dims.width);
       setHeight(dims.height);
       setSelectedFile(file);
+      trackFileUpload('Image Resizer', 'Image Tools', file.type);
 
       const objectUrl = URL.createObjectURL(file);
       setPreviewSrc(objectUrl);
@@ -113,6 +121,7 @@ export const ImageResizer: React.FC<ImageResizerProps> = ({ onNavigateToTool }) 
 
     setIsProcessing(true);
     setError(null);
+    trackProcessingStarted('Image Resizer', 'Image Tools', selectedFile.type);
 
     try {
       const res = await resizeImage(selectedFile, {
@@ -122,7 +131,9 @@ export const ImageResizer: React.FC<ImageResizerProps> = ({ onNavigateToTool }) 
         outputFormat,
       });
       setResult(res);
+      trackProcessingSuccess('Image Resizer', 'Image Tools', res.mimeType);
     } catch (err: unknown) {
+      trackProcessingFailed('Image Resizer', 'Image Tools', err, selectedFile.type);
       setError(err instanceof Error ? err.message : 'Resizing failed.');
     } finally {
       setIsProcessing(false);
@@ -133,6 +144,7 @@ export const ImageResizer: React.FC<ImageResizerProps> = ({ onNavigateToTool }) 
     if (!result || !selectedFile) return;
     const ext = result.mimeType.split('/')[1] || 'jpg';
     const filename = sanitizeFileName(selectedFile.name, `-${result.width}x${result.height}`, ext);
+    trackFileDownload('Image Resizer', 'Image Tools', result.mimeType);
     downloadBlob(result.blob, filename);
   };
 

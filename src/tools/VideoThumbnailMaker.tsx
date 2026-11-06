@@ -24,6 +24,13 @@ import {
   VideoFileInfo 
 } from '../services/videoService';
 import { formatBytes, downloadBlob, sanitizeFileName } from '../utils/fileHelpers';
+import { 
+  trackFileUpload, 
+  trackProcessingStarted, 
+  trackProcessingSuccess, 
+  trackProcessingFailed, 
+  trackFileDownload 
+} from '../utils/analytics';
 
 interface VideoThumbnailMakerProps {
   onNavigateToTool?: (slug: string) => void;
@@ -77,6 +84,7 @@ export const VideoThumbnailMaker: React.FC<VideoThumbnailMakerProps> = () => {
 
     setSelectedFile(file);
     setVideoInfo(info);
+    trackFileUpload('video_thumbnail_maker', 'video', file.type || 'video/mp4');
     setCurrentTime(0.5);
 
     // Initial capture at 0.5s or midpoint
@@ -119,6 +127,7 @@ export const VideoThumbnailMaker: React.FC<VideoThumbnailMakerProps> = () => {
   const handleCaptureFrame = async (timestamp?: number) => {
     if (!videoRef.current || !videoInfo) return;
     const t = typeof timestamp === 'number' ? timestamp : videoRef.current.currentTime;
+    trackProcessingStarted('video_thumbnail_maker', 'video');
 
     try {
       const result = await captureFrameAtTime(videoRef.current, t, format, quality);
@@ -129,8 +138,11 @@ export const VideoThumbnailMaker: React.FC<VideoThumbnailMakerProps> = () => {
       setCapturedWidth(result.width);
       setCapturedHeight(result.height);
       setCapturedSize(result.size);
+      trackProcessingSuccess('video_thumbnail_maker', 'video');
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to capture frame from video.');
+      const msg = err instanceof Error ? err.message : 'Failed to capture frame from video.';
+      setError(msg);
+      trackProcessingFailed('video_thumbnail_maker', 'video', msg);
     }
   };
 
@@ -139,6 +151,7 @@ export const VideoThumbnailMaker: React.FC<VideoThumbnailMakerProps> = () => {
     const timeFormatted = formatTimecode(currentTime).replace(':', 'm') + 's';
     const filename = sanitizeFileName(selectedFile.name, `_thumb_${timeFormatted}`, format);
     downloadBlob(capturedBlob, filename);
+    trackFileDownload('video_thumbnail_maker', 'video', format === 'jpg' ? 'image/jpeg' : 'image/png');
   };
 
   const handleReset = () => {

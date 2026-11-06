@@ -24,6 +24,13 @@ import {
   ExtractedFrame 
 } from '../services/videoService';
 import { formatBytes, downloadBlob, sanitizeFileName } from '../utils/fileHelpers';
+import { 
+  trackFileUpload, 
+  trackProcessingStarted, 
+  trackProcessingSuccess, 
+  trackProcessingFailed, 
+  trackFileDownload 
+} from '../utils/analytics';
 
 interface VideoFrameExtractorProps {
   onNavigateToTool?: (slug: string) => void;
@@ -74,6 +81,7 @@ export const VideoFrameExtractor: React.FC<VideoFrameExtractorProps> = () => {
 
     setSelectedFile(file);
     setVideoInfo(info);
+    trackFileUpload('video_frame_extractor', 'video', file.type || 'video/mp4');
 
     // Auto-adjust default frame count or interval based on duration
     if (info.duration > 60) {
@@ -125,6 +133,7 @@ export const VideoFrameExtractor: React.FC<VideoFrameExtractorProps> = () => {
     setError(null);
     setProgressPercent(0);
     setProgressText(`Extracting frame 1 of ${timestamps.length}...`);
+    trackProcessingStarted('video_frame_extractor', 'video');
 
     try {
       const frames = await extractMultipleFrames(
@@ -138,8 +147,11 @@ export const VideoFrameExtractor: React.FC<VideoFrameExtractorProps> = () => {
         }
       );
       setExtractedFrames(frames);
+      trackProcessingSuccess('video_frame_extractor', 'video');
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to extract video frames.');
+      const msg = err instanceof Error ? err.message : 'Failed to extract video frames.';
+      setError(msg);
+      trackProcessingFailed('video_frame_extractor', 'video', msg);
     } finally {
       setIsProcessing(false);
     }
@@ -154,6 +166,7 @@ export const VideoFrameExtractor: React.FC<VideoFrameExtractorProps> = () => {
       format
     );
     downloadBlob(frame.blob, filename);
+    trackFileDownload('video_frame_extractor', 'video', format === 'jpg' ? 'image/jpeg' : 'image/png');
   };
 
   const handleDownloadZip = async () => {
@@ -163,6 +176,7 @@ export const VideoFrameExtractor: React.FC<VideoFrameExtractorProps> = () => {
       const zipBlob = await createFramesZip(extractedFrames, selectedFile.name, format);
       const zipName = sanitizeFileName(selectedFile.name, '_all_frames', 'zip');
       downloadBlob(zipBlob, zipName);
+      trackFileDownload('video_frame_extractor', 'video', 'application/zip');
     } catch (err) {
       setError('Failed to create ZIP archive of extracted frames.');
     } finally {

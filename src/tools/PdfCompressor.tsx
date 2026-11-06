@@ -22,6 +22,13 @@ import {
   PdfCompressResult 
 } from '../services/pdfCompressorService';
 import { formatBytes, downloadBlob, sanitizeFileName } from '../utils/fileHelpers';
+import { 
+  trackFileUpload, 
+  trackProcessingStarted, 
+  trackProcessingSuccess, 
+  trackProcessingFailed, 
+  trackFileDownload 
+} from '../utils/analytics';
 
 interface PdfCompressorProps {
   onNavigateToTool?: (toolSlug: string) => void;
@@ -68,6 +75,7 @@ export const PdfCompressor: React.FC<PdfCompressorProps> = ({ onNavigateToTool }
 
     setSelectedFile(file);
     setPdfInfo(info);
+    trackFileUpload('PDF Compressor', 'PDF Tools', 'application/pdf');
   };
 
   const handleCompress = async () => {
@@ -75,6 +83,7 @@ export const PdfCompressor: React.FC<PdfCompressorProps> = ({ onNavigateToTool }
 
     setIsProcessing(true);
     setError(null);
+    trackProcessingStarted('PDF Compressor', 'PDF Tools', 'application/pdf');
 
     let effectiveQuality = 0.72;
     let effectiveDpi = 140;
@@ -101,7 +110,9 @@ export const PdfCompressor: React.FC<PdfCompressorProps> = ({ onNavigateToTool }
       });
 
       setResult(res);
+      trackProcessingSuccess('PDF Compressor', 'PDF Tools', 'application/pdf');
     } catch (err: unknown) {
+      trackProcessingFailed('PDF Compressor', 'PDF Tools', err, 'application/pdf');
       setError(err instanceof Error ? err.message : 'PDF compression failed. The file may be damaged.');
     } finally {
       setIsProcessing(false);
@@ -113,6 +124,7 @@ export const PdfCompressor: React.FC<PdfCompressorProps> = ({ onNavigateToTool }
     if (!result || !selectedFile) return;
     const suffix = result.isReductionAchieved ? '_compressed' : '_optimized';
     const filename = sanitizeFileName(selectedFile.name, suffix, 'pdf');
+    trackFileDownload('PDF Compressor', 'PDF Tools', 'application/pdf');
     downloadBlob(result.blob, filename);
   };
 

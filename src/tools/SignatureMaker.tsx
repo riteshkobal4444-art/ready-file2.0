@@ -26,6 +26,13 @@ import {
 } from '../services/signatureService';
 import { loadImage } from '../services/cropService';
 import { downloadBlob, formatBytes } from '../utils/fileHelpers';
+import { 
+  trackFileUpload, 
+  trackProcessingStarted, 
+  trackProcessingSuccess, 
+  trackProcessingFailed, 
+  trackFileDownload 
+} from '../utils/analytics';
 
 type SignatureMode = 'draw' | 'type' | 'upload';
 
@@ -157,6 +164,7 @@ export const SignatureMaker: React.FC = () => {
       const img = await loadImage(file);
       setUploadImgEl(img);
       setUploadedFile(file);
+      trackFileUpload('Signature Maker', 'Image Tools', file.type);
     } catch {
       // Decode error
     }
@@ -166,6 +174,8 @@ export const SignatureMaker: React.FC = () => {
   const handleDownloadSignature = async () => {
     let finalCanvas: HTMLCanvasElement | null = null;
     const bg = exportFormat === 'jpg' ? 'white' : 'transparent';
+    const mime = exportFormat === 'jpg' ? 'image/jpeg' : 'image/png';
+    trackProcessingStarted('Signature Maker', 'Image Tools', mime);
 
     if (mode === 'draw') {
       if (strokes.length === 0) return;
@@ -193,10 +203,11 @@ export const SignatureMaker: React.FC = () => {
 
     if (!finalCanvas) return;
 
-    const mime = exportFormat === 'jpg' ? 'image/jpeg' : 'image/png';
     finalCanvas.toBlob(
       (blob) => {
         if (!blob) return;
+        trackProcessingSuccess('Signature Maker', 'Image Tools', mime);
+        trackFileDownload('Signature Maker', 'Image Tools', mime);
         const filename = `signature_${Date.now()}.${exportFormat}`;
         downloadBlob(blob, filename);
       },

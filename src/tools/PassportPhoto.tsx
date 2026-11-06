@@ -24,6 +24,13 @@ import {
 } from '../services/passportService';
 import { loadImage } from '../services/cropService';
 import { formatBytes, downloadBlob, sanitizeFileName } from '../utils/fileHelpers';
+import { 
+  trackFileUpload, 
+  trackProcessingStarted, 
+  trackProcessingSuccess, 
+  trackProcessingFailed, 
+  trackFileDownload 
+} from '../utils/analytics';
 
 interface PassportPhotoProps {
   onNavigateToTool?: (toolSlug: string) => void;
@@ -75,6 +82,7 @@ export const PassportPhoto: React.FC<PassportPhotoProps> = ({ onNavigateToTool }
       const img = await loadImage(file);
       setNaturalDims({ width: img.naturalWidth, height: img.naturalHeight });
       setSelectedFile(file);
+      trackFileUpload('Passport Photo Maker', 'Image Tools', file.type);
       setPreviewSrc(URL.createObjectURL(file));
       setCropBox({ x: 20, y: 10, width: 60, height: 75 });
     } catch {
@@ -154,6 +162,7 @@ export const PassportPhoto: React.FC<PassportPhotoProps> = ({ onNavigateToTool }
     if (!selectedFile || !naturalDims) return;
     setIsProcessing(true);
     setError(null);
+    trackProcessingStarted('Passport Photo Maker', 'Image Tools', selectedFile.type);
 
     try {
       const realX = (cropBox.x / 100) * naturalDims.width;
@@ -180,7 +189,9 @@ export const PassportPhoto: React.FC<PassportPhotoProps> = ({ onNavigateToTool }
       });
 
       setResult(res);
+      trackProcessingSuccess('Passport Photo Maker', 'Image Tools', format);
     } catch (err: unknown) {
+      trackProcessingFailed('Passport Photo Maker', 'Image Tools', err, selectedFile.type);
       setError(err instanceof Error ? err.message : 'Photo generation failed.');
     } finally {
       setIsProcessing(false);
@@ -191,6 +202,7 @@ export const PassportPhoto: React.FC<PassportPhotoProps> = ({ onNavigateToTool }
     if (!result || !selectedFile) return;
     const ext = format === 'image/jpeg' ? 'jpg' : 'png';
     const filename = sanitizeFileName(selectedFile.name, `_passport_${result.pixelWidth}x${result.pixelHeight}`, ext);
+    trackFileDownload('Passport Photo Maker', 'Image Tools', format);
     downloadBlob(result.blob, filename);
   };
 

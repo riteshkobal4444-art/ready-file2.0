@@ -27,6 +27,13 @@ import {
 } from '../services/pdfService';
 import { createConvertedZip } from '../services/converterService';
 import { formatBytes, downloadBlob, sanitizeFileName } from '../utils/fileHelpers';
+import { 
+  trackFileUpload, 
+  trackProcessingStarted, 
+  trackProcessingSuccess, 
+  trackProcessingFailed, 
+  trackFileDownload 
+} from '../utils/analytics';
 
 interface PdfSplitterProps {
   onNavigateToTool?: (toolSlug: string) => void;
@@ -82,6 +89,7 @@ export const PdfSplitter: React.FC<PdfSplitterProps> = ({ onNavigateToTool }) =>
 
     setSelectedFile(file);
     setPdfInfo(info);
+    trackFileUpload('PDF Splitter', 'PDF Tools', 'application/pdf');
     // Default: select first page or all
     setSelectedPages([1]);
     if (info.pageCount > 1) {
@@ -149,6 +157,7 @@ export const PdfSplitter: React.FC<PdfSplitterProps> = ({ onNavigateToTool }) =>
     setError(null);
     setExtractedBlob(null);
     setSplitFiles([]);
+    trackProcessingStarted('PDF Splitter', 'PDF Tools', 'application/pdf');
 
     try {
       if (mode === 'extract') {
@@ -175,7 +184,9 @@ export const PdfSplitter: React.FC<PdfSplitterProps> = ({ onNavigateToTool }) =>
         const results = await splitPdfGroups(selectedFile, groupSize);
         setSplitFiles(results);
       }
+      trackProcessingSuccess('PDF Splitter', 'PDF Tools', 'application/pdf');
     } catch (err: unknown) {
+      trackProcessingFailed('PDF Splitter', 'PDF Tools', err, 'application/pdf');
       setError(err instanceof Error ? err.message : 'PDF splitting failed.');
     } finally {
       setIsProcessing(false);
@@ -185,6 +196,7 @@ export const PdfSplitter: React.FC<PdfSplitterProps> = ({ onNavigateToTool }) =>
   const handleDownloadExtracted = () => {
     if (!extractedBlob || !selectedFile) return;
     const filename = sanitizeFileName(selectedFile.name, `_extracted_${selectedPages.length}_pages`, 'pdf');
+    trackFileDownload('PDF Splitter', 'PDF Tools', 'application/pdf');
     downloadBlob(extractedBlob, filename);
   };
 
@@ -193,6 +205,7 @@ export const PdfSplitter: React.FC<PdfSplitterProps> = ({ onNavigateToTool }) =>
     const zipItems = splitFiles.map((f) => ({ filename: f.name, blob: f.blob }));
     const zipBlob = await createConvertedZip(zipItems);
     const baseName = selectedFile.name.replace(/\.[^/.]+$/, '');
+    trackFileDownload('PDF Splitter', 'PDF Tools', 'application/zip');
     downloadBlob(zipBlob, `${baseName}_split_files.zip`);
   };
 

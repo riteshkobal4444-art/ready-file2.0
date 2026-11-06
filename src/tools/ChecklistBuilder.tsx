@@ -23,6 +23,12 @@ import {
 } from '../services/checklistService';
 import { downloadBlob, sanitizeFileName } from '../utils/fileHelpers';
 import { ErrorMessage } from '../components/ErrorMessage';
+import { 
+  trackProcessingStarted, 
+  trackProcessingSuccess, 
+  trackProcessingFailed, 
+  trackFileDownload 
+} from '../utils/analytics';
 
 export const ChecklistBuilder: React.FC = () => {
   const [checklists, setChecklists] = useState<Checklist[]>([]);
@@ -95,6 +101,7 @@ export const ChecklistBuilder: React.FC = () => {
     e.preventDefault();
     if (!newChecklistTitle.trim()) return;
 
+    trackProcessingStarted('document_checklist', 'other');
     const newId = `custom-${Date.now()}`;
     const newChecklist: Checklist = {
       id: newId,
@@ -114,6 +121,7 @@ export const ChecklistBuilder: React.FC = () => {
     setActiveChecklistId(newId);
     setNewChecklistTitle('');
     setIsCreatingCustom(false);
+    trackProcessingSuccess('document_checklist', 'other');
   };
 
   const handleDeleteChecklist = (id: string) => {
@@ -127,6 +135,7 @@ export const ChecklistBuilder: React.FC = () => {
   const handleExportPdf = async () => {
     if (!activeChecklist) return;
     setIsExportingPdf(true);
+    trackProcessingStarted('document_checklist', 'other');
     try {
       const pdfBlob = await exportChecklistToPdf(activeChecklist);
       const filename = sanitizeFileName(
@@ -135,8 +144,11 @@ export const ChecklistBuilder: React.FC = () => {
         'pdf'
       );
       downloadBlob(pdfBlob, filename);
-    } catch {
-      // export error handling
+      trackProcessingSuccess('document_checklist', 'other');
+      trackFileDownload('document_checklist', 'other', 'application/pdf');
+    } catch (err: unknown) {
+      const msg = err instanceof Error ? err.message : 'export_failed';
+      trackProcessingFailed('document_checklist', 'other', msg);
     } finally {
       setIsExportingPdf(false);
     }

@@ -23,6 +23,7 @@ import { VideoThumbnailMaker } from '../tools/VideoThumbnailMaker';
 import { VideoFrameExtractor } from '../tools/VideoFrameExtractor';
 import { ComingSoonView } from '../components/ComingSoonView';
 import { ToolItem } from '../types';
+import { trackToolOpen } from '../utils/analytics';
 
 interface ToolPageProps {
   toolSlug: string;
@@ -36,6 +37,12 @@ export const ToolPage: React.FC<ToolPageProps> = ({
   onSelectTool,
 }) => {
   const tool = getToolBySlug(toolSlug);
+
+  React.useEffect(() => {
+    if (tool) {
+      trackToolOpen(tool.name, tool.categoryName || tool.category);
+    }
+  }, [tool?.slug]);
 
   if (!tool) {
     return (

@@ -18,6 +18,13 @@ import { inspectPdfFile, PdfFileInfo } from '../services/pdfService';
 import { loadPdfJsDoc, renderPdfPageToCanvas } from '../services/pdfRenderer';
 import { createConvertedZip } from '../services/converterService';
 import { formatBytes, downloadBlob, sanitizeFileName } from '../utils/fileHelpers';
+import { 
+  trackFileUpload, 
+  trackProcessingStarted, 
+  trackProcessingSuccess, 
+  trackProcessingFailed, 
+  trackFileDownload 
+} from '../utils/analytics';
 
 interface ConvertedImageItem {
   pageNumber: number;
@@ -78,6 +85,7 @@ export const PdfToImages: React.FC<PdfToImagesProps> = () => {
 
     setSelectedFile(file);
     setPdfInfo(info);
+    trackFileUpload('pdf_to_images', 'pdf', file.type || 'application/pdf');
     // Default: select all pages
     setSelectedPages(Array.from({ length: info.pageCount }, (_, i) => i + 1));
     setCustomRange(info.pageCount > 1 ? `1-${Math.min(3, info.pageCount)}` : '1');
@@ -124,6 +132,7 @@ export const PdfToImages: React.FC<PdfToImagesProps> = () => {
     setIsProcessing(true);
     setError(null);
     setConvertedImages([]);
+    trackProcessingStarted('pdf_to_images', 'pdf');
 
     try {
       const pdfJsDoc = await loadPdfJsDoc(selectedFile);
@@ -156,8 +165,11 @@ export const PdfToImages: React.FC<PdfToImagesProps> = () => {
       }
 
       setConvertedImages(results);
+      trackProcessingSuccess('pdf_to_images', 'pdf');
     } catch (err: unknown) {
-      setError(err instanceof Error ? err.message : 'Failed to convert PDF pages to images.');
+      const msg = err instanceof Error ? err.message : 'Failed to convert PDF pages to images.';
+      setError(msg);
+      trackProcessingFailed('pdf_to_images', 'pdf', msg);
     } finally {
       setIsProcessing(false);
       setProgressText('');
@@ -169,6 +181,7 @@ export const PdfToImages: React.FC<PdfToImagesProps> = () => {
     const baseName = selectedFile.name.replace(/\.[^/.]+$/, '');
     const filename = `${baseName}-page-${item.pageNumber}.${format}`;
     downloadBlob(item.blob, filename);
+    trackFileDownload('pdf_to_images', 'pdf', format === 'jpg' ? 'image/jpeg' : 'image/png');
   };
 
   const handleDownloadAllZip = async () => {
@@ -181,6 +194,7 @@ export const PdfToImages: React.FC<PdfToImagesProps> = () => {
 
     const zipBlob = await createConvertedZip(zipFiles);
     downloadBlob(zipBlob, `${baseName}-images-${format}.zip`);
+    trackFileDownload('pdf_to_images', 'pdf', 'application/zip');
   };
 
   const handleReset = () => {

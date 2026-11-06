@@ -19,6 +19,7 @@ import { NotFound } from './pages/NotFound';
 import { ToolItem, GuideItem } from './types';
 import { getToolBySlug } from './data/tools';
 import { getGuideBySlug } from './data/guides';
+import { Analytics } from '@vercel/analytics/react';
 
 export default function App() {
   const [currentPath, setCurrentPath] = useState<string>(() => {
@@ -55,7 +56,7 @@ export default function App() {
     if (currentPath === '/') {
       document.title = 'READYFILE — Every document. Ready to submit.';
     } else if (currentPath === '/tools') {
-      document.title = 'All Document Tools (15) — READYFILE';
+      document.title = 'All Document & Media Tools — READYFILE';
     } else if (currentPath === '/image-tools') {
       document.title = 'Image Preparation Tools — READYFILE';
     } else if (currentPath === '/pdf-tools') {
@@ -147,6 +148,9 @@ export default function App() {
 
       {/* Mobile Fixed Bottom Navigation (strictly hidden on desktop md:hidden) */}
       <MobileBottomNav currentPath={currentPath} onNavigate={navigate} />
+
+      {/* Vercel Web Analytics */}
+      <Analytics />
     </div>
   );
 }

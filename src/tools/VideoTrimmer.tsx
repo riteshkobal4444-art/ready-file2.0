@@ -18,6 +18,13 @@ import { ErrorMessage } from '../components/ErrorMessage';
 import { inspectVideoFile, formatTimecode, VideoFileInfo } from '../services/videoService';
 import { trimVideo } from '../services/ffmpegService';
 import { formatBytes, downloadBlob, sanitizeFileName } from '../utils/fileHelpers';
+import { 
+  trackFileUpload, 
+  trackProcessingStarted, 
+  trackProcessingSuccess, 
+  trackProcessingFailed, 
+  trackFileDownload 
+} from '../utils/analytics';
 
 interface VideoTrimmerProps {
   onNavigateToTool?: (slug: string) => void;
@@ -71,6 +78,7 @@ export const VideoTrimmer: React.FC<VideoTrimmerProps> = () => {
 
     setSelectedFile(file);
     setVideoInfo(info);
+    trackFileUpload('video_trimmer', 'video', file.type || 'video/mp4');
     setStartTime(0);
     setEndTime(Math.min(info.duration, info.duration > 15 ? 15 : info.duration));
     setCurrentTime(0);
@@ -129,6 +137,7 @@ export const VideoTrimmer: React.FC<VideoTrimmerProps> = () => {
         ? 'Re-encoding exact frame range with libx264...'
         : 'Fast stream-copying keyframe sequence...'
     );
+    trackProcessingStarted('video_trimmer', 'video');
 
     try {
       const blob = await trimVideo(selectedFile, startTime, endTime, mode, (p) => {
@@ -141,8 +150,11 @@ export const VideoTrimmer: React.FC<VideoTrimmerProps> = () => {
 
       setTrimmedBlob(blob);
       setTrimmedPreviewUrl(url);
+      trackProcessingSuccess('video_trimmer', 'video');
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to trim video file.');
+      const msg = err instanceof Error ? err.message : 'Failed to trim video file.';
+      setError(msg);
+      trackProcessingFailed('video_trimmer', 'video', msg);
     } finally {
       setIsProcessing(false);
     }
@@ -154,6 +166,7 @@ export const VideoTrimmer: React.FC<VideoTrimmerProps> = () => {
     const endStr = formatTimecode(endTime).replace(':', 'm') + 's';
     const filename = sanitizeFileName(selectedFile.name, `_trimmed_${startStr}_to_${endStr}`, 'mp4');
     downloadBlob(trimmedBlob, filename);
+    trackFileDownload('video_trimmer', 'video', 'video/mp4');
   };
 
   const handleReset = () => {
