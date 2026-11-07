@@ -35,8 +35,9 @@ export function sanitizeFileType(rawTypeOrExt?: string | null): string {
   if (lower.includes('gif')) return 'image/gif';
   if (lower.includes('svg')) return 'image/svg+xml';
 
-  // PDF
+  // PDF & Word Document types
   if (lower.includes('pdf')) return 'application/pdf';
+  if (lower.includes('docx') || lower.includes('word') || lower.includes('wordprocessingml')) return 'application/vnd.openxmlformats-officedocument.wordprocessingml.document';
 
   // Video types
   if (lower.includes('mp4')) return 'video/mp4';
@@ -170,3 +171,31 @@ export function trackFileDownload(toolName: string, toolCategory: string, rawFil
     file_type: sanitizeFileType(rawFileType),
   });
 }
+
+/**
+ * 7. Stage 1 Engine specific privacy-safe tracking events
+ */
+export function trackPdfWordStage1Started(pageCount: number, mode: string) {
+  emitEvent('pdf_word_stage1_started', {
+    tool_name: 'pdf_to_word',
+    page_count: pageCount,
+    mode,
+  });
+}
+
+export function trackPdfWordStage1Success(pageCount: number, mode: string, textBlocksCount = 0) {
+  emitEvent('pdf_word_stage1_success', {
+    tool_name: 'pdf_to_word',
+    page_count: pageCount,
+    mode,
+    blocks_count: textBlocksCount,
+  });
+}
+
+export function trackPdfWordStage1Failed(failureCategory: string) {
+  emitEvent('pdf_word_stage1_failed', {
+    tool_name: 'pdf_to_word',
+    failure_category: failureCategory,
+  });
+}
+

@@ -6,7 +6,7 @@ import {
   ArrowLeft, 
   ShieldCheck, 
   ArrowRight,
-  Layers
+  Lock
 } from 'lucide-react';
 import { ToolItem } from '../types';
 import { Breadcrumb } from './Breadcrumb';
@@ -17,32 +17,66 @@ interface ComingSoonViewProps {
 }
 
 export const ComingSoonView: React.FC<ComingSoonViewProps> = ({ tool, onNavigate }) => {
+  const isPdfToWord = tool.slug === 'pdf-to-word';
+
   return (
     <div className="max-w-3xl mx-auto space-y-6">
       <Breadcrumb
         items={[
           { label: 'Tools', path: '/tools' },
-          { label: tool.categoryName, path: tool.category === 'image' ? '/image-tools' : tool.category === 'pdf' ? '/pdf-tools' : '/tools' },
+          { label: tool.categoryName, path: tool.category === 'image' ? '/image-tools' : tool.category === 'pdf' ? '/pdf-tools' : tool.category === 'video' ? '/video-tools' : '/tools' },
           { label: tool.name },
         ]}
         onNavigate={onNavigate}
       />
 
       <div className="bg-[#FFFFFF] border border-[#E7EAF0] rounded-xl p-8 sm:p-12 text-center shadow-sm">
-        <div className="w-16 h-16 rounded-2xl bg-[#5278F5]/10 text-[#5278F5] flex items-center justify-center mx-auto mb-5">
-          <Clock className="w-8 h-8 stroke-[1.8]" />
+        {/* Lock or Clock Icon */}
+        <div className={`w-16 h-16 rounded-2xl flex items-center justify-center mx-auto mb-5 shadow-xs ${
+          isPdfToWord 
+            ? 'bg-amber-500/10 text-amber-600 border border-amber-500/20' 
+            : 'bg-[#5278F5]/10 text-[#5278F5]'
+        }`}>
+          {isPdfToWord ? (
+            <Lock className="w-8 h-8 stroke-[1.8]" />
+          ) : (
+            <Clock className="w-8 h-8 stroke-[1.8]" />
+          )}
         </div>
 
-        <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-[#5278F5]/10 text-[#5278F5] border border-[#5278F5]/20 mb-3">
-          <Sparkles className="w-3.5 h-3.5" />
-          <span>Planned for {tool.plannedRelease || 'Version 1.1'}</span>
+        {/* Status Badge */}
+        <div className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold mb-3 shadow-xs ${
+          isPdfToWord
+            ? 'bg-amber-50 text-amber-800 border border-amber-300/80'
+            : 'bg-[#5278F5]/10 text-[#5278F5] border border-[#5278F5]/20'
+        }`}>
+          {isPdfToWord ? (
+            <>
+              <Lock className="w-3.5 h-3.5 text-amber-600" />
+              <span>Coming Soon</span>
+            </>
+          ) : (
+            <>
+              <Sparkles className="w-3.5 h-3.5" />
+              <span>Planned for {tool.plannedRelease || 'Version 1.1'}</span>
+            </>
+          )}
         </div>
 
         <h1 className="font-['Plus_Jakarta_Sans'] font-bold text-2xl sm:text-3xl text-[#182230] mb-3 tracking-tight">
           {tool.name}
         </h1>
 
-        <p className="text-base text-[#687386] max-w-lg mx-auto leading-relaxed mb-8">
+        {/* Custom locked message for PDF to Word */}
+        {isPdfToWord ? (
+          <div className="max-w-xl mx-auto bg-amber-50/80 border border-amber-200/90 rounded-xl p-5 sm:p-6 mb-6 text-center shadow-xs">
+            <p className="text-sm sm:text-base text-[#182230] leading-relaxed font-medium">
+              We're working on a more reliable PDF to Word conversion experience. This tool will be available once we've completed development and quality testing.
+            </p>
+          </div>
+        ) : null}
+
+        <p className="text-sm text-[#687386] max-w-lg mx-auto leading-relaxed mb-8">
           {tool.description}
         </p>
 
@@ -75,15 +109,15 @@ export const ComingSoonView: React.FC<ComingSoonViewProps> = ({ tool, onNavigate
         <div className="flex flex-col sm:flex-row items-center justify-center gap-3">
           <button
             onClick={() => onNavigate('/tools')}
-            className="w-full sm:w-auto px-5 py-2.5 rounded-lg border border-[#E7EAF0] hover:bg-[#F4F6FA] text-xs font-medium text-[#182230] flex items-center justify-center gap-2 transition-colors"
+            className="w-full sm:w-auto px-5 py-2.5 rounded-lg border border-[#E7EAF0] hover:bg-[#F4F6FA] text-xs font-medium text-[#182230] flex items-center justify-center gap-2 transition-colors cursor-pointer"
           >
             <ArrowLeft className="w-3.5 h-3.5" />
             <span>Back to All Tools</span>
           </button>
 
           <button
-            onClick={() => onNavigate(tool.category === 'image' ? '/image-tools' : '/pdf-tools')}
-            className="w-full sm:w-auto px-5 py-2.5 rounded-lg bg-[#5278F5] hover:bg-[#4165DC] text-white text-xs font-medium flex items-center justify-center gap-2 transition-colors shadow-sm"
+            onClick={() => onNavigate(tool.category === 'image' ? '/image-tools' : tool.category === 'pdf' ? '/pdf-tools' : tool.category === 'video' ? '/video-tools' : '/tools')}
+            className="w-full sm:w-auto px-5 py-2.5 rounded-lg bg-[#5278F5] hover:bg-[#4165DC] text-white text-xs font-medium flex items-center justify-center gap-2 transition-colors shadow-sm cursor-pointer"
           >
             <span>Explore Active {tool.categoryName}</span>
             <ArrowRight className="w-3.5 h-3.5" />
@@ -93,3 +127,4 @@ export const ComingSoonView: React.FC<ComingSoonViewProps> = ({ tool, onNavigate
     </div>
   );
 };
+

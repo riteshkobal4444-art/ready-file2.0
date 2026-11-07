@@ -23,7 +23,10 @@ import {
   VolumeX,
   Camera,
   Clapperboard,
-  Video
+  Video,
+  FileText,
+  FileSignature,
+  Stamp
 } from 'lucide-react';
 import { ToolItem } from '../types';
 
@@ -32,6 +35,9 @@ const iconMap: Record<string, React.ElementType> = {
   Maximize2,
   FileImage,
   FileStack,
+  FileText,
+  FileSignature,
+  Stamp,
   CheckCircle2,
   Crop,
   RefreshCw,
@@ -62,19 +68,24 @@ export const ToolCard: React.FC<ToolCardProps> = ({ tool, onSelect }) => {
 
   return (
     <div
-      onClick={() => onSelect(tool)}
-      role="button"
-      tabIndex={0}
+      onClick={() => {
+        if (isActive) {
+          onSelect(tool);
+        }
+      }}
+      role={isActive ? 'button' : undefined}
+      tabIndex={isActive ? 0 : -1}
+      aria-disabled={!isActive}
       onKeyDown={(e) => {
-        if (e.key === 'Enter' || e.key === ' ') {
+        if (isActive && (e.key === 'Enter' || e.key === ' ')) {
           e.preventDefault();
           onSelect(tool);
         }
       }}
-      className={`group relative text-left bg-[#FFFFFF] border border-[#E7EAF0] rounded-xl p-6 transition-all duration-200 cursor-pointer flex flex-col justify-between ${
+      className={`group relative text-left bg-[#FFFFFF] border rounded-xl p-6 transition-all duration-200 flex flex-col justify-between ${
         isActive
-          ? 'hover:border-[#5278F5]/40 hover:shadow-[0_4px_14px_0_rgba(24,34,48,0.06)]'
-          : 'hover:border-[#E7EAF0] hover:bg-[#F4F6FA]/50 hover:shadow-[0_2px_8px_0_rgba(24,34,48,0.03)] opacity-95'
+          ? 'cursor-pointer border-[#E7EAF0] hover:border-[#5278F5]/40 hover:shadow-[0_4px_14px_0_rgba(24,34,48,0.06)]'
+          : 'cursor-default border-[#E7EAF0] bg-[#FFFFFF] opacity-90 select-none shadow-none'
       }`}
     >
       <div>
@@ -84,26 +95,28 @@ export const ToolCard: React.FC<ToolCardProps> = ({ tool, onSelect }) => {
             className={`w-11 h-11 rounded-lg flex items-center justify-center transition-colors ${
               isActive
                 ? 'bg-[#5278F5]/10 text-[#5278F5] group-hover:bg-[#5278F5] group-hover:text-white'
-                : 'bg-[#F4F6FA] text-[#687386]'
+                : 'bg-amber-500/10 text-amber-700 border border-amber-500/20'
             }`}
           >
             <IconComponent className="w-5 h-5 stroke-[1.8]" />
           </div>
 
           <div className="flex items-center gap-1.5">
-            {tool.badge && isActive && (
-              <span className="inline-flex items-center px-2 py-0.5 rounded-full text-[11px] font-semibold bg-[#5278F5]/10 text-[#5278F5] border border-[#5278F5]/20">
-                {tool.badge}
-              </span>
-            )}
             {isActive ? (
-              <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[11px] font-medium bg-[#24B47E]/10 text-[#24B47E] border border-[#24B47E]/20">
-                <span className="w-1.5 h-1.5 rounded-full bg-[#24B47E]" />
-                Active
-              </span>
+              <>
+                {tool.badge && (
+                  <span className="inline-flex items-center px-2 py-0.5 rounded-full text-[11px] font-semibold bg-[#5278F5]/10 text-[#5278F5] border border-[#5278F5]/20">
+                    {tool.badge}
+                  </span>
+                )}
+                <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[11px] font-medium bg-[#24B47E]/10 text-[#24B47E] border border-[#24B47E]/20">
+                  <span className="w-1.5 h-1.5 rounded-full bg-[#24B47E]" />
+                  Active
+                </span>
+              </>
             ) : (
-              <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[11px] font-medium bg-[#F4F6FA] text-[#687386] border border-[#E7EAF0]">
-                <Clock className="w-3 h-3 text-[#687386]" />
+              <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-amber-50 text-amber-800 border border-amber-300/80 shadow-xs">
+                <Clock className="w-3 h-3 text-amber-600" />
                 Coming Soon
               </span>
             )}
@@ -115,7 +128,9 @@ export const ToolCard: React.FC<ToolCardProps> = ({ tool, onSelect }) => {
           <div className="text-[11px] font-semibold uppercase tracking-wider text-[#687386] mb-1">
             {tool.categoryName}
           </div>
-          <h3 className="font-['Plus_Jakarta_Sans'] font-semibold text-base text-[#182230] group-hover:text-[#5278F5] transition-colors leading-snug">
+          <h3 className={`font-['Plus_Jakarta_Sans'] font-semibold text-base transition-colors leading-snug ${
+            isActive ? 'text-[#182230] group-hover:text-[#5278F5]' : 'text-[#182230]'
+          }`}>
             {tool.name}
           </h3>
         </div>
@@ -139,11 +154,12 @@ export const ToolCard: React.FC<ToolCardProps> = ({ tool, onSelect }) => {
           </>
         ) : (
           <>
-            <span className="text-[#687386] font-medium">
-              {tool.plannedRelease || 'In development'}
+            <span className="text-xs text-[#8A94A6] font-medium flex items-center gap-1">
+              <Clock className="w-3 h-3 text-[#8A94A6]" />
+              Temporarily unavailable
             </span>
-            <span className="text-xs text-[#5278F5] group-hover:underline">
-              View preview →
+            <span className="text-[11px] font-semibold text-[#687386] px-2 py-0.5 rounded bg-[#F4F6FA] border border-[#E7EAF0]">
+              {tool.plannedRelease || 'In development'}
             </span>
           </>
         )}

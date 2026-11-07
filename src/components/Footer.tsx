@@ -1,5 +1,6 @@
 import React from 'react';
 import { FileText, Shield, Sparkles, Check, ArrowUpRight } from 'lucide-react';
+import { PDF_TO_WORD_ENABLED } from '../config/features';
 
 interface FooterProps {
   onNavigate: (path: string) => void;
@@ -56,7 +57,7 @@ export const Footer: React.FC<FooterProps> = ({ onNavigate }) => {
                   onClick={() => handleNav('/tools')}
                   className="text-[#182230] hover:text-[#5278F5] transition-colors"
                 >
-                  All Tools (20)
+                  All Tools (22)
                 </button>
               </li>
               <li>
@@ -97,16 +98,19 @@ export const Footer: React.FC<FooterProps> = ({ onNavigate }) => {
           {/* Column 2: PDF Tools */}
           <div>
             <h4 className="text-xs font-semibold uppercase tracking-wider text-[#687386] mb-4">
-              PDF Tools (6)
+              PDF Tools (9)
             </h4>
             <ul className="space-y-2 text-xs">
               {[
-                { name: 'PDF Merger', slug: 'pdf-merger' },
-                { name: 'PDF Splitter', slug: 'pdf-splitter' },
-                { name: 'PDF Compressor', slug: 'pdf-compressor' },
-                { name: 'PDF to Images', slug: 'pdf-to-images' },
-                { name: 'Rotate PDF', slug: 'rotate-pdf' },
-                { name: 'Reorder PDF Pages', slug: 'reorder-pdf' },
+                { name: 'PDF Merger', slug: 'pdf-merger', active: true },
+                { name: 'PDF Splitter', slug: 'pdf-splitter', active: true },
+                { name: 'PDF Compressor', slug: 'pdf-compressor', active: true },
+                { name: 'PDF to Images', slug: 'pdf-to-images', active: true },
+                { name: 'Rotate PDF', slug: 'rotate-pdf', active: true },
+                { name: 'Reorder PDF Pages', slug: 'reorder-pdf', active: true },
+                { name: 'PDF Form Filler', slug: 'pdf-form-filler', active: true },
+                { name: 'PDF Watermark', slug: 'pdf-watermark', active: true },
+                { name: 'PDF to Word', slug: 'pdf-to-word', active: PDF_TO_WORD_ENABLED },
               ].map((t) => (
                 <li key={t.slug}>
                   <button
@@ -114,7 +118,13 @@ export const Footer: React.FC<FooterProps> = ({ onNavigate }) => {
                     className="text-[#182230] hover:text-[#5278F5] transition-colors flex items-center gap-1.5"
                   >
                     <span>{t.name}</span>
-                    <span className="w-1.5 h-1.5 rounded-full bg-[#24B47E]" />
+                    {t.active ? (
+                      <span className="w-1.5 h-1.5 rounded-full bg-[#24B47E]" />
+                    ) : (
+                      <span className="text-[9px] font-semibold text-amber-700 bg-amber-50 border border-amber-200/80 px-1 py-0.2 rounded-xs">
+                        Soon
+                      </span>
+                    )}
                   </button>
                 </li>
               ))}

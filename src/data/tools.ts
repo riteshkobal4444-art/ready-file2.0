@@ -1,4 +1,5 @@
 import { ToolItem, ToolCategory } from '../types';
+import { PDF_TO_WORD_ENABLED } from '../config/features';
 
 export const TOOLS: ToolItem[] = [
   // --- Active Tools (5) ---
@@ -185,6 +186,59 @@ export const TOOLS: ToolItem[] = [
     icon: 'ArrowUpDown',
     badge: 'New',
     features: ['Visual thumbnail grid', 'Drag and drop sorting', 'Delete unwanted individual pages', 'Export new clean sequence'],
+  },
+  {
+    id: 'pdf-to-word',
+    slug: 'pdf-to-word',
+    name: 'PDF to Word Converter',
+    category: 'pdf',
+    categoryName: 'PDF Tools',
+    description: 'Convert PDF documents into editable Word files. Extracts selectable text, paragraphs, and headings into standard DOCX format.',
+    tagline: 'Convert PDF files into editable Word documents in seconds',
+    status: PDF_TO_WORD_ENABLED ? 'active' : 'coming_soon',
+    icon: 'FileText',
+    badge: PDF_TO_WORD_ENABLED ? 'New' : 'Coming Soon',
+    features: ['Extracts selectable text', 'Generates editable .docx Word files', 'Preserves headings and paragraphs', '100% in-browser processing'],
+  },
+  {
+    id: 'pdf-form-filler',
+    slug: 'pdf-form-filler',
+    name: 'PDF Form Filler',
+    category: 'pdf',
+    categoryName: 'PDF Tools',
+    description: 'Fill PDF forms digitally. Add text, dates, checkmarks and signatures to your documents.',
+    tagline: 'Fill any PDF. Save it. Submit it.',
+    status: 'active',
+    icon: 'FileSignature',
+    badge: 'New',
+    features: [
+      'Add custom text & dates',
+      'Checkboxes & checkmarks',
+      'Draw or upload signatures',
+      'Insert stamps & images',
+      'Preserves original PDF quality',
+      '100% in-browser processing'
+    ],
+  },
+  {
+    id: 'pdf-watermark',
+    slug: 'pdf-watermark',
+    name: 'PDF Watermark',
+    category: 'pdf',
+    categoryName: 'PDF Tools',
+    description: 'Add text or logo watermarks to PDF documents. Customize opacity, angle, tile patterns, and page ranges with real-time preview.',
+    tagline: 'Protect and mark your PDF documents with custom watermarks',
+    status: 'active',
+    icon: 'Stamp',
+    badge: 'New',
+    features: [
+      'Text & logo image watermarks',
+      'Confidential & draft presets',
+      'Opacity & angle sliders',
+      'Repeating tile grid patterns',
+      'Selective page range target',
+      '100% in-browser processing'
+    ],
   },
 
   // Document Preparation (Active V1.2)

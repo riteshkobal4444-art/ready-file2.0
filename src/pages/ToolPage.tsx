@@ -15,6 +15,9 @@ import { PdfCompressor } from '../tools/PdfCompressor';
 import { PdfToImages } from '../tools/PdfToImages';
 import { RotatePdf } from '../tools/RotatePdf';
 import { ReorderPdf } from '../tools/ReorderPdf';
+import { PdfToWord } from '../tools/PdfToWord';
+import { PdfFormFiller } from '../tools/PdfFormFiller';
+import { PdfWatermark } from '../tools/PdfWatermark';
 import { ChecklistBuilder } from '../tools/ChecklistBuilder';
 import { VideoCompressor } from '../tools/VideoCompressor';
 import { VideoTrimmer } from '../tools/VideoTrimmer';
@@ -142,6 +145,18 @@ export const ToolPage: React.FC<ToolPageProps> = ({
 
       {tool.slug === 'reorder-pdf' && (
         <ReorderPdf onNavigateToTool={(slug) => onNavigate(`/tool/${slug}`)} />
+      )}
+
+      {tool.slug === 'pdf-to-word' && (
+        <PdfToWord onNavigateToTool={(slug) => onNavigate(`/tool/${slug}`)} />
+      )}
+
+      {tool.slug === 'pdf-form-filler' && (
+        <PdfFormFiller onNavigateToTool={(slug) => onNavigate(`/tool/${slug}`)} />
+      )}
+
+      {tool.slug === 'pdf-watermark' && (
+        <PdfWatermark onNavigateToTool={(slug) => onNavigate(`/tool/${slug}`)} />
       )}
 
       {tool.slug === 'checklist-builder' && (
